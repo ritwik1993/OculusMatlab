@@ -1,11 +1,11 @@
-OculusRiftExamples
+OculusMatlab
 ==================
 
-Example code for using the Oculus Rift, written for the book [Oculus Rift in Action](http://oculusriftinaction.com)
+This is an application written that exploits an interface between Oculus Code written in C++ and a client script running in matlab. As of now, this is still under development so do not expect everything to run straight out of the box when cloned and installed. The project setup and a lot of Macros have been adapted from this amazing book [Oculus Rift in Action](http://oculusriftinaction.com), whose main example repo can be found at [OculusRiftInAction](https://github.com/OculusRiftInAction/OculusRiftInAction)
 
 # Notes
 
-This example code is designed to use static linking throughout.  This means static linking against the C/C++ runtimes 
+This application is designed to use static linking throughout.  This means static linking against the C/C++ runtimes 
 on windows (to avoid issues with missing Visual Studio redistributables) and static linking against all of the 
 included submodules.  Dynamic linking is only used for system libraries (other than the C++ runtime on Windows) and 
 for the resource DLL on windows.  In order to avoid having each executable contain a distinct copy of the (currently 
@@ -16,13 +16,15 @@ to load them.
 
 ## Checking out 
 
-	git clone https://github.com/OculusRiftInAction/OculusRiftInAction.git --recursive
+	git clone git@github.com:ritwik1993/OculusMatlab.git --recursive
 
 This command is likely to take a while. It's a big project with lots of submodules
 
+NOTE! The following steps MIGHT not work if you do not have boost installed in your system. I will soon add instructions on what to do if thats the case.
+
 ## Creating project files
 
-	cd OculusRiftInAction
+	cd OculusMatlab
 	mkdir build
 	cd build
 	cmake .. [-G <your preferred toolset>]

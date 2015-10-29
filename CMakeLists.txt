@@ -132,6 +132,19 @@ else()
         list(APPEND EXAMPLE_LIBS ${PNG_LIBRARIES})
     endif()
 endif()
+###############################################################################
+# Boost - required for a lot of code to work
+ 
+find_package(Boost QUIET REQUIRED COMPONENTS system thread)
+
+if (Boost_FOUND) 
+  message(STATUS "Boost Found")
+  list(APPEND EXAMPLE_LIBS ${Boost_LIBRARIES})
+  include_directories(${Boost_INCLUDE_DIRS})
+else()
+    message(STATUS "Boost NOT found")
+endif()
+
 
 ###############################################################################
 # Leap Motion SDK - Required for building the chapter 14 examples that use 
@@ -283,9 +296,9 @@ endif()
 
 ###############################################################################
 #
-# The examples themselves
+# The source
 #
-add_subdirectory(examples/cpp)
+add_subdirectory(src)
 
 if (LeapMotion_FOUND)
     add_custom_command(TARGET ExampleResources POST_BUILD
