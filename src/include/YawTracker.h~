@@ -1,0 +1,16 @@
+#pragma once
+
+#include "Common.h"
+
+class YawTracker {
+ private:
+  ovrHmd hmd;
+  ovrTrackingState state;
+  ovrQuatf orientation;
+  glm::quat q;
+  glm::vec3 euler;
+ public:
+  YawTracker(ovrHmd riftObj);
+  double CurrentYaw();
+};
+  

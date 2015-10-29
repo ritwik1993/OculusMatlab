@@ -1,0 +1,22 @@
+#include "Common.h"
+
+ // Initialise the head tracker
+YawTracker::YawTracker(ovrHmd riftObj)
+  : hmd(riftObj){
+  if (!ovrHmd_ConfigureTracking(riftObj,
+      ovrTrackingCap_Orientation, 0)) {
+      SAY_ERR("Unable to start the Head tracker");      
+      return -1;
+  }
+  }
+
+//Method to read current yaw in degrees
+double YawTracker::CurrentYaw() {
+  state = ovrHmd_getTrackingState(hmd, 0);
+  orientation = state.HeadPose.ThePose.Orientation;
+  q = glm::make_quat(&orientation.x);
+  euler = glm::eulerAngles(q);
+  return ( euler.y * RADIANS_TO_DEGREES);
+  }
+
+  
