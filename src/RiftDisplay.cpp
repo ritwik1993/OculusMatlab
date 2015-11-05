@@ -3,6 +3,7 @@
 class RiftDisplay : public GlfwApp {
   ovrHmd hmd;
 
+  int i =0;
 public:
 
   RiftDisplay() {
@@ -21,9 +22,7 @@ public:
     bool extendedMode = ovrHmdCap_ExtendDesktop & hmd->HmdCaps;
 
     outPosition = glm::ivec2(hmd->WindowsPos.x, hmd->WindowsPos.y);
-    outSize = glm::uvec2(hmd->Resolution.w, hmd->Resolution.h);
-    // std::cout << outPosition.x << std::endl;
-    // std::cout << outPosition.y << std::endl;
+    outSize = glm::uvec2(hmd->Resolution.w, hmd->Resolution.h);  
     if (extendedMode) {
       GLFWmonitor * monitor = glfw::getMonitorAtPosition(outPosition);
       if (nullptr != monitor) {
@@ -31,6 +30,8 @@ public:
 	 outSize = glm::uvec2(mode->width, mode->height);
       }
       glfwWindowHint(GLFW_DECORATED, 0);
+      std::cout << outSize.x << std::endl;
+      std::cout << outSize.y << std::endl;
       window = glfw::createWindow(outSize, outPosition);
     } else {
 
@@ -55,18 +56,52 @@ public:
   void draw() {
     glm::uvec2 eyeSize = getSize();
     eyeSize.x /= 2;
-  
-    glEnable(GL_SCISSOR_TEST);
+    int k;
+    Platform::sleepMillis(500);
+    if (i<1000) {
+      k = i%3;
+      switch (k){
+      case 0:
+        glEnable(GL_SCISSOR_TEST);
+        glScissor(0, 2*eyeSize.y/3, eyeSize.x, eyeSize.y/3);
+        glClearColor(1, 0, 0, 1);
+        glClear(GL_COLOR_BUFFER_BIT);
 
-    glScissor(0, 0, eyeSize.x, eyeSize.y);
-    glClearColor(1, 0, 0, 1);
-    glClear(GL_COLOR_BUFFER_BIT);
+        glScissor(eyeSize.x, 2*eyeSize.y/3, eyeSize.x, eyeSize.y/3);
+        glClearColor(1, 0, 0, 1);
+        glClear(GL_COLOR_BUFFER_BIT);
 
-    glScissor(eyeSize.x, 0, eyeSize.x, eyeSize.y);
-    glClearColor(0, 0, 1, 1);
-    glClear(GL_COLOR_BUFFER_BIT);
+        glDisable(GL_SCISSOR_TEST);
+        i++;
+	break;
+      case 1:
+        glEnable(GL_SCISSOR_TEST);
+        glScissor(0, 2*eyeSize.y/3, eyeSize.x, eyeSize.y/3);
+        glClearColor(0, 1, 0, 1);
+        glClear(GL_COLOR_BUFFER_BIT);
 
-    glDisable(GL_SCISSOR_TEST);
+        glScissor(eyeSize.x, 2*eyeSize.y/3, eyeSize.x, eyeSize.y/3);
+        glClearColor(0, 1, 0, 1);
+        glClear(GL_COLOR_BUFFER_BIT);
+
+        glDisable(GL_SCISSOR_TEST);
+        i++;
+	break;
+      case 2:
+        glEnable(GL_SCISSOR_TEST);
+        glScissor(0, 2*eyeSize.y/3, eyeSize.x, eyeSize.y/3);
+        glClearColor(0, 0, 1, 1);
+        glClear(GL_COLOR_BUFFER_BIT);
+
+        glScissor(eyeSize.x, 2*eyeSize.y/3, eyeSize.x, eyeSize.y/3);
+        glClearColor(0, 0, 1, 1);
+        glClear(GL_COLOR_BUFFER_BIT);
+
+        glDisable(GL_SCISSOR_TEST);
+        i++;
+	break;
+      }
+    }
   }
 };
 
