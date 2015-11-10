@@ -166,6 +166,7 @@ public:
 
 #include "ores/YawTracker.h"
 #include "ores/TcpServer.h"
+#include "ores/RenderUtils.h"
 
 // Combine some macros together to create a single macro
 // to run an example app

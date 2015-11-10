@@ -42,6 +42,7 @@ public:
         static ovrPosef poses[2];
         ovrHmd_GetEyePoses(hmd, 0, offsets, poses, nullptr);
       }
+     
 
       window = glfw::createSecondaryScreenWindow(outSize);
       void * nativeWindowHandle = glfw::getNativeWindowHandle(window);
@@ -55,53 +56,12 @@ public:
 
   void draw() {
     glm::uvec2 eyeSize = getSize();
-    eyeSize.x /= 2;
-    int k;
-    Platform::sleepMillis(500);
-    if (i<1000) {
-      k = i%3;
-      switch (k){
-      case 0:
-        glEnable(GL_SCISSOR_TEST);
-        glScissor(0, 2*eyeSize.y/3, eyeSize.x, eyeSize.y/3);
-        glClearColor(1, 0, 0, 1);
-        glClear(GL_COLOR_BUFFER_BIT);
-
-        glScissor(eyeSize.x, 2*eyeSize.y/3, eyeSize.x, eyeSize.y/3);
-        glClearColor(1, 0, 0, 1);
-        glClear(GL_COLOR_BUFFER_BIT);
-
-        glDisable(GL_SCISSOR_TEST);
-        i++;
-	break;
-      case 1:
-        glEnable(GL_SCISSOR_TEST);
-        glScissor(0, 2*eyeSize.y/3, eyeSize.x, eyeSize.y/3);
-        glClearColor(0, 1, 0, 1);
-        glClear(GL_COLOR_BUFFER_BIT);
-
-        glScissor(eyeSize.x, 2*eyeSize.y/3, eyeSize.x, eyeSize.y/3);
-        glClearColor(0, 1, 0, 1);
-        glClear(GL_COLOR_BUFFER_BIT);
-
-        glDisable(GL_SCISSOR_TEST);
-        i++;
-	break;
-      case 2:
-        glEnable(GL_SCISSOR_TEST);
-        glScissor(0, 2*eyeSize.y/3, eyeSize.x, eyeSize.y/3);
-        glClearColor(0, 0, 1, 1);
-        glClear(GL_COLOR_BUFFER_BIT);
-
-        glScissor(eyeSize.x, 2*eyeSize.y/3, eyeSize.x, eyeSize.y/3);
-        glClearColor(0, 0, 1, 1);
-        glClear(GL_COLOR_BUFFER_BIT);
-
-        glDisable(GL_SCISSOR_TEST);
-        i++;
-	break;
-      }
-    }
+    RenderDraft(eyeSize, i, 0);
+    std::string message = Platform::format(
+					     "Oculus Rift \n"
+					     "Electrosense");
+    GlfwApp::renderStringAt(message, glm::vec2(0.5f,-0.5f));
+    i++;
   }
 };
 
