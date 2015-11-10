@@ -91,7 +91,6 @@ public:
       oglplus::Context::Clear().DepthBuffer();
       Stacks::withPush(mv, [&]{
         mv.preMultiply(eyeArgs.modelviewOffset);
-        //oria::renderExampleScene(ipd, eyeHeight);
 	RenderDraft(eyeSize, 0, 0);	
         RenderMessageAt(message, eyeSize, glm::vec2(0.0f, 0.0f));
       });
