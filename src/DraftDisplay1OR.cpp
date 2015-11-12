@@ -91,8 +91,8 @@ public:
       oglplus::Context::Clear().DepthBuffer();
       Stacks::withPush(mv, [&]{
         mv.preMultiply(eyeArgs.modelviewOffset);
-	oresRender->RenderDraft(eyeSize, 0, 0);	
-        oresRender->RenderMessageAt(message, eyeSize, glm::vec2(0.0f, 0.0f));
+	oresRender->RenderFinal(eyeSize, 0);	
+        oresRender->RenderMessageAt(message, eyeSize, glm::vec2(0.05f, -0.05f));
       });
     }
 

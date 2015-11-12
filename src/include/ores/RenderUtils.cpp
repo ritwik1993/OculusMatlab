@@ -3,9 +3,8 @@
 RenderUtils::RenderUtils() {
 }
 
-void RenderUtils:: RenderDraft(glm::uvec2 eyeSize, int i, int eye){
-   glm::uvec2 eyeOrigin(eye * eyeSize.x, 0);
-  eyeSize.x /= 2;
+void RenderUtils:: RenderHeatMap(glm::uvec2 eyeSize, int i){
+    eyeSize.x /= 2;
     int k;
     Platform::sleepMillis(1000);
     if (True) {
@@ -13,11 +12,11 @@ void RenderUtils:: RenderDraft(glm::uvec2 eyeSize, int i, int eye){
       switch (k){
       case 0:
         glEnable(GL_SCISSOR_TEST);
-        glScissor(eyeOrigin.x, 2*eyeSize.y/3, eyeSize.x, eyeSize.y/3);
+        glScissor(0, 2*eyeSize.y/3, eyeSize.x, eyeSize.y/3);
         glClearColor(1, 0, 0, 1);
         glClear(GL_COLOR_BUFFER_BIT);
 
-        glScissor(eyeOrigin.x + eyeSize.x, 2*eyeSize.y/3, eyeSize.x, eyeSize.y/3);
+        glScissor( eyeSize.x, 2*eyeSize.y/3, eyeSize.x, eyeSize.y/3);
         glClearColor(1, 0, 0, 1);
         glClear(GL_COLOR_BUFFER_BIT);
 
@@ -26,11 +25,11 @@ void RenderUtils:: RenderDraft(glm::uvec2 eyeSize, int i, int eye){
 	break;
       case 1:
         glEnable(GL_SCISSOR_TEST);
-        glScissor(eyeOrigin.x, 2*eyeSize.y/3, eyeSize.x, eyeSize.y/3);
+        glScissor(0, 2*eyeSize.y/3, eyeSize.x, eyeSize.y/3);
         glClearColor(0, 1, 0, 1);
         glClear(GL_COLOR_BUFFER_BIT);
 
-        glScissor(eyeOrigin.x + eyeSize.x, 2*eyeSize.y/3, eyeSize.x, eyeSize.y/3);
+        glScissor(eyeSize.x, 2*eyeSize.y/3, eyeSize.x, eyeSize.y/3);
         glClearColor(0, 1, 0, 1);
         glClear(GL_COLOR_BUFFER_BIT);
 
@@ -39,28 +38,21 @@ void RenderUtils:: RenderDraft(glm::uvec2 eyeSize, int i, int eye){
 	break;
       case 2:
         glEnable(GL_SCISSOR_TEST);
-        glScissor(eyeOrigin.x, 2*eyeSize.y/3, eyeSize.x, eyeSize.y/3);
+        glScissor(0 , 2*eyeSize.y/3, eyeSize.x, eyeSize.y/3);
         glClearColor(0, 0, 1, 1);
         glClear(GL_COLOR_BUFFER_BIT);
 
-        glScissor(eyeOrigin.x + eyeSize.x, 2*eyeSize.y/3, eyeSize.x, eyeSize.y/3);
+        glScissor(eyeSize.x, 2*eyeSize.y/3, eyeSize.x, eyeSize.y/3);
         glClearColor(0, 0, 1, 1);
         glClear(GL_COLOR_BUFFER_BIT);
 
         glDisable(GL_SCISSOR_TEST);
         i++;
 	break;
-      }
-      glEnable(GL_SCISSOR_TEST);
-      glScissor(eyeOrigin.x+100, 0+100,eyeSize.x/2,eyeSize.y/2);
-      glClearColor(0.5,0.5,0.5,0.5);
-      glClear(GL_COLOR_BUFFER_BIT);
-      glDisable(GL_SCISSOR_TEST);      
+      }      
     }
 }
 void RenderUtils::RenderMessageAt(std::string str, glm::uvec2 windowSize, glm::vec2  pos){
-  float         windowAspect{ 1.0f };
-  float         windowAspectInverse{ 1.0f };
   windowAspect = aspect(windowSize);
   windowAspectInverse = 1.0f / windowAspect;
   MatrixStack & mv = Stacks::modelview();
@@ -75,6 +67,20 @@ void RenderUtils::RenderMessageAt(std::string str, glm::uvec2 windowSize, glm::v
   pr.pop();
   mv.pop();
 
+}
+
+void RenderUtils::RenderPositionMap(glm::uvec2 eyeSize) {
+   eyeSize.x /= 2;   
+   glEnable(GL_SCISSOR_TEST);
+   glScissor(100, 0+100,eyeSize.x/2,eyeSize.y/2);
+   glClearColor(0.5,0.5,0.5,0.5);
+   glClear(GL_COLOR_BUFFER_BIT);
+   glDisable(GL_SCISSOR_TEST);
+}
+
+void RenderUtils::RenderFinal(glm::uvec2 eyeSize, int i){
+  RenderHeatMap(eyeSize, i);
+  RenderPositionMap(eyeSize);
 }
 
 
