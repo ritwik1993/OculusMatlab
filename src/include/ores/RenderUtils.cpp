@@ -63,10 +63,9 @@ void RenderUtils::RenderMessageAt(std::string str, glm::uvec2 windowSize, glm::v
     -windowAspectInverse, windowAspectInverse,
     -100.0f, 100.0f);
   glm::vec2 cursor(pos.x, windowAspectInverse * pos.y);
-  oria::renderString(str, cursor, 18.0f);
+  oria::renderString(str, cursor, 12.0f);
   pr.pop();
   mv.pop();
-
 }
 
 void RenderUtils::RenderPositionMap(glm::uvec2 eyeSize) {
@@ -81,6 +80,16 @@ void RenderUtils::RenderPositionMap(glm::uvec2 eyeSize) {
 void RenderUtils::RenderFinal(glm::uvec2 eyeSize, int i){
   RenderHeatMap(eyeSize, i);
   RenderPositionMap(eyeSize);
+  RenderOdomData(eyeSize, 50);
+}
+
+void RenderUtils::RenderOdomData(glm::uvec2 eyeSize, int distance = 0){
+ std::string message = Platform::format(
+					     "Estimated Distance: %0.2f \n"
+					     "Object Type: Conductor",
+					     distance);
+ RenderMessageAt(message, eyeSize, glm::vec2(0.05f, -0.05f));
+   
 }
 
 

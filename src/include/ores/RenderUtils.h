@@ -11,4 +11,5 @@ class RenderUtils {
   void RenderMessageAt( std::string, glm::uvec2, glm::vec2);
   void RenderPositionMap(glm::uvec2);
   void RenderFinal(glm::uvec2, int);
+  void RenderOdomData(glm::uvec2, int);
 };

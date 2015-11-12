@@ -74,10 +74,7 @@ public:
   virtual void draw() {
     glm::uvec2 eyeSize = getSize();
     static ovrPosef eyePoses[2];    
-   std::string message = Platform::format(
-					     "Oculus Rift \n"
-					     "Electrosense");
-   
+  
     ovrHmd_BeginFrame(hmd, getFrame());
     MatrixStack & mv = Stacks::modelview();
     for (int i = 0; i < ovrEye_Count; ++i) {
@@ -92,7 +89,6 @@ public:
       Stacks::withPush(mv, [&]{
         mv.preMultiply(eyeArgs.modelviewOffset);
 	oresRender->RenderFinal(eyeSize, 0);	
-        oresRender->RenderMessageAt(message, eyeSize, glm::vec2(0.05f, -0.05f));
       });
     }
 
