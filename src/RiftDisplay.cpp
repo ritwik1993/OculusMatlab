@@ -56,7 +56,7 @@ public:
 
   void draw() {
     glm::uvec2 eyeSize = getSize();
-    RenderDraft(eyeSize, i, 0);
+    //RenderDraft(eyeSize, i, 0);
     std::string message = Platform::format(
 					     "Oculus Rift \n"
 					     "Electrosense");

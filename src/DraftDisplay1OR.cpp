@@ -16,7 +16,7 @@ int k =0;
 class DraftDisplay1OR: public RiftGlfwApp {
   PerEyeArg eyes[2];
   ovrTexture eyeTextures[2];
-
+  RenderUtils *oresRender = new RenderUtils(); // RU todo: Destroy this
   float ipd, eyeHeight;
 
 public:
@@ -91,8 +91,8 @@ public:
       oglplus::Context::Clear().DepthBuffer();
       Stacks::withPush(mv, [&]{
         mv.preMultiply(eyeArgs.modelviewOffset);
-	RenderDraft(eyeSize, 0, 0);	
-        RenderMessageAt(message, eyeSize, glm::vec2(0.0f, 0.0f));
+	oresRender->RenderDraft(eyeSize, 0, 0);	
+        oresRender->RenderMessageAt(message, eyeSize, glm::vec2(0.0f, 0.0f));
       });
     }
 

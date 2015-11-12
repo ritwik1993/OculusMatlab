@@ -1,6 +1,9 @@
 #include "Common.h"
 
-void RenderDraft(glm::uvec2 eyeSize, int i, int eye){
+RenderUtils::RenderUtils() {
+}
+
+void RenderUtils:: RenderDraft(glm::uvec2 eyeSize, int i, int eye){
    glm::uvec2 eyeOrigin(eye * eyeSize.x, 0);
   eyeSize.x /= 2;
     int k;
@@ -55,7 +58,7 @@ void RenderDraft(glm::uvec2 eyeSize, int i, int eye){
       glDisable(GL_SCISSOR_TEST);      
     }
 }
-void RenderMessageAt(std::string str, glm::uvec2 windowSize, glm::vec2  pos){
+void RenderUtils::RenderMessageAt(std::string str, glm::uvec2 windowSize, glm::vec2  pos){
   float         windowAspect{ 1.0f };
   float         windowAspectInverse{ 1.0f };
   windowAspect = aspect(windowSize);
