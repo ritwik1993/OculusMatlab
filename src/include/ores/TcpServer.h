@@ -35,10 +35,13 @@ class TcpServer {
   bool connectMode = 0;
   void Write_Handler(const boost::system::error_code&,
 		     std::size_t);
+  void Read_Handler(const boost::system::error_code&,
+		     std::size_t);
   void Accept_Handler(const boost::system::error_code&);
  public:
   TcpServer(unsigned short );
-  void WriteData();
+  void Write_Data();
+  void Read_Data();
   void UpdateYaw(double);
   ~TcpServer();
 };

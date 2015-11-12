@@ -36,7 +36,8 @@ public:
     while ( i < 100 && trackObj->ReadTrackingState() != 0) {
       //SAY("Current Yaw - %.02f", trackObj->CurrentYaw());
       socketObj->UpdateYaw(trackObj->CurrentYaw());
-      socketObj->WriteData();
+      socketObj->Write_Data();
+      socketObj->Read_Data();
       Platform::sleepMillis(1000);
       i++;
     }

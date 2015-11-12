@@ -32,10 +32,17 @@ TcpServer::TcpServer(unsigned short port = 1700)
 }
 
 void TcpServer::Write_Handler(const boost::system::error_code& ec,
-				std::size_t bytes_transferred){
+			      std::size_t bytes_transferred){
   if (!ec)
     {
       std::cout << "Just sent " << yawData << std::endl;
+    }
+}
+void TcpServer::Read_Handler(const boost::system::error_code& ec,
+				std::size_t bytes_transferred){
+  if (!ec)
+    {
+      std::cout << "Just Read " << std::endl;
     }
 }
 
@@ -47,7 +54,7 @@ void TcpServer::Accept_Handler(const boost::system::error_code& ec){
     }
 }
 
-void TcpServer::WriteData(){
+void TcpServer::Write_Data(){
   if (connectMode){
     SAY("Sent data");
     std::ostringstream ss;
@@ -65,6 +72,22 @@ void TcpServer::WriteData(){
 void TcpServer::UpdateYaw(double data) {
   yawData = data;
 }  
+
+void TcpServer::Read_Data(){
+  if (connectMode){
+     boost::asio::streambuf input_buffer_;
+     async_read_until(socket, input_buffer_, '\n', boost::bind(&TcpServer::Read_Handler, this,
+						  placeholders::error,
+							placeholders::bytes_transferred));
+     std::string line;
+     std::istream is(&input_buffer_);
+     std::getline(is, line);
+     if (!line.empty())
+       {
+     std::cout << "Recieved: " << line << std::endl;
+       }
+  }
+}
 
 TcpServer::~TcpServer(){
   svc.stop();
