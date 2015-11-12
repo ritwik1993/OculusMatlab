@@ -71,7 +71,7 @@ void RenderUtils::RenderMessageAt(std::string str, glm::uvec2 windowSize, glm::v
 void RenderUtils::RenderPositionMap(glm::uvec2 eyeSize) {
    eyeSize.x /= 2;   
    glEnable(GL_SCISSOR_TEST);
-   glScissor(100, 0+100,eyeSize.x/2,eyeSize.y/2);
+   glScissor(250, 300, eyeSize.x/3,eyeSize.y/3);
    glClearColor(0.5,0.5,0.5,0.5);
    glClear(GL_COLOR_BUFFER_BIT);
    glDisable(GL_SCISSOR_TEST);
@@ -83,12 +83,12 @@ void RenderUtils::RenderFinal(glm::uvec2 eyeSize, int i){
   RenderOdomData(eyeSize, 50);
 }
 
-void RenderUtils::RenderOdomData(glm::uvec2 eyeSize, int distance = 0){
+void RenderUtils::RenderOdomData(glm::uvec2 eyeSize, int distance){
  std::string message = Platform::format(
-					     "Estimated Distance: %0.2f \n"
+					     "Estimated Distance: %0.2d \n"
 					     "Object Type: Conductor",
 					     distance);
- RenderMessageAt(message, eyeSize, glm::vec2(0.05f, -0.05f));
+ RenderMessageAt(message, eyeSize, glm::vec2(0.02f, -0.02f));
    
 }
 
