@@ -27,12 +27,14 @@ TcpServer::TcpServer(unsigned short port = 1700)
   tcp::acceptor acc(svc, tcp::endpoint(tcp::v4(), ipPort));
   acc.listen();
   acc.async_accept(socket, boost::bind(&TcpServer::Accept_Handler, this, placeholders::error));
+ 
   SAY("Waiting for a New connection");
   svc.run();
 }
 
 void TcpServer::Write_Handler(const boost::system::error_code& ec,
 			      std::size_t bytes_transferred){
+  std::cout << ec.message() << std::endl;
   if (!ec)
     {
       std::cout << "Just sent " << yawData << std::endl;
@@ -44,6 +46,8 @@ void TcpServer::Read_Handler(const boost::system::error_code& ec,
     {
       std::cout << "Just Read " << std::endl;
     }
+  else
+    std::cout << "Error reading:" << ec.message() << std::endl;
 }
 
 void TcpServer::Accept_Handler(const boost::system::error_code& ec){
@@ -75,12 +79,14 @@ void TcpServer::UpdateYaw(double data) {
 
 void TcpServer::Read_Data(){
   if (connectMode){
-     boost::asio::streambuf input_buffer_;
-     async_read_until(socket, input_buffer_, '\n', boost::bind(&TcpServer::Read_Handler, this,
+    async_read_until(socket, input_buffer_, "\n", boost::bind(&TcpServer::Read_Handler, this,
 						  placeholders::error,
 							placeholders::bytes_transferred));
      std::string line;
      std::istream is(&input_buffer_);
+     std::string test;
+     is >> test;
+     std::cout << "test" << test << std::endl;
      std::getline(is, line);
      if (!line.empty())
        {
