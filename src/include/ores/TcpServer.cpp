@@ -44,7 +44,16 @@ void TcpServer::Read_Handler(const boost::system::error_code& ec,
 				std::size_t bytes_transferred){
   if (!ec)
     {
-      std::cout << "Just Read " << std::endl;
+      std::string line;
+     std::istream is(&input_buffer_);
+     std::string test;
+     is >> test;
+     std::cout << "test" << test << std::endl;
+     std::getline(is, line);
+     if (!line.empty())
+       {
+     std::cout << "Recieved: " << line << std::endl;
+       }
     }
   else
     std::cout << "Error reading:" << ec.message() << std::endl;
@@ -79,19 +88,9 @@ void TcpServer::UpdateYaw(double data) {
 
 void TcpServer::Read_Data(){
   if (connectMode){
-    async_read_until(socket, input_buffer_, "\n", boost::bind(&TcpServer::Read_Handler, this,
-						  placeholders::error,
-							placeholders::bytes_transferred));
-     std::string line;
-     std::istream is(&input_buffer_);
-     std::string test;
-     is >> test;
-     std::cout << "test" << test << std::endl;
-     std::getline(is, line);
-     if (!line.empty())
-       {
-     std::cout << "Recieved: " << line << std::endl;
-       }
+    async_read_until(socket, input_buffer_, "\n" , boost::bind(&TcpServer::Read_Handler, this,
+    						  placeholders::error,
+							       placeholders::bytes_transferred));
   }
 }
 
