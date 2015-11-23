@@ -32,14 +32,14 @@ public:
     YawTracker *trackObj = new YawTracker(hmd);
     //Initialise a Tcp server to send data on port (def: 1700)
     TcpServer *socketObj = new TcpServer(1700);
- 
     while ( i < 100 && trackObj->ReadTrackingState() != 0) {
       SAY("Current Yaw - %.02f", trackObj->CurrentYaw());
       socketObj->UpdateYaw(trackObj->CurrentYaw());
       socketObj->Write_Data();
       socketObj->Read_Data();
-      Platform::sleepMillis(1000);
+      Platform::sleepMillis(100);
       i++;
+      
     }
     delete trackObj;
     delete socketObj;

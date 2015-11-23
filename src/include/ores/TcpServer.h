@@ -28,7 +28,7 @@ using namespace boost::asio::ip;
 
 class TcpServer {
  private:
-  io_service svc;  
+  io_service svc; 
   tcp::socket socket{svc};
   
   double yawData = 0;
