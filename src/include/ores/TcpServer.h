@@ -34,7 +34,7 @@ class TcpServer {
   double yawData = 0;
   unsigned short ipPort;
   bool connectMode = 0;
-  streambuf input_buffer_;
+  streambuf input_buffer_, output_buffer_;
   void Write_Handler(const boost::system::error_code&,
 		     std::size_t);
   void Read_Handler(const boost::system::error_code&,

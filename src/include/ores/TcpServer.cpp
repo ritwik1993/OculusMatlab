@@ -69,15 +69,11 @@ void TcpServer::Accept_Handler(const boost::system::error_code& ec){
 
 void TcpServer::Write_Data(){
   if (connectMode){
-    SAY("Sent data");
-    std::ostringstream ss;
-    std::string sendBuffer;
-    ss << std::fixed << std::setprecision(2);
-    ss << yawData;
-    sendBuffer = ss.str() + "\r";
-    async_write(socket, buffer(sendBuffer), boost::bind(&TcpServer::Write_Handler, this,
-						  placeholders::error,
-						   placeholders::bytes_transferred));
+     SAY("Send data");
+    std::ostream ss(&output_buffer_);
+    ss << std::fixed << std::setprecision(2) << yawData << "\r";
+    async_write(socket, output_buffer_,
+            boost::bind(&TcpServer::Write_Handler, this, placeholders::error, placeholders::bytes_transferred));
     }
 }
 
