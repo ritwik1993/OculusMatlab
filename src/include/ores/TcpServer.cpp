@@ -35,7 +35,7 @@ void TcpServer::Write_Handler(const boost::system::error_code& ec,
 			      std::size_t bytes_transferred){
   if (!ec)
     {
-      std::cout << "Just sent " << yawData << std::endl;
+      //std::cout << "Just sent " << yawData << std::endl;
     }
 }
 void TcpServer::Read_Handler(const boost::system::error_code& ec,
@@ -46,11 +46,12 @@ void TcpServer::Read_Handler(const boost::system::error_code& ec,
      std::istream is(&input_buffer_);
      std::string test;
      is >> test;
-     std::cout << "test message: " << test << std::endl;
+     es_data = std::stoi(test);
+     //std::cout << "test message: " << test << std::endl;
      std::getline(is, line);
      if (!line.empty())
        {
-     std::cout << "Recieved: " << line << std::endl;
+	 //std::cout << "Recieved: " << line << std::endl;
        }
     }
   else
@@ -66,7 +67,7 @@ void TcpServer::Accept_Handler(const boost::system::error_code& ec){
 
 void TcpServer::Write_Data(){
   if (connectMode){
-     SAY("Send data");
+    //SAY("Send data");
     std::ostream ss(&output_buffer_);
     ss << std::fixed << std::setprecision(2) << yawData << "\r";
     async_write(socket, output_buffer_,
@@ -89,6 +90,10 @@ void TcpServer::Read_Data(){
      svc.reset();
     svc.run();
   }
+}
+
+int TcpServer::Get_EsData(){
+  return es_data;
 }
 
 TcpServer::~TcpServer(){

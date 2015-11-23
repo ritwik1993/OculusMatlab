@@ -18,12 +18,16 @@ class DraftDisplay1OR: public RiftGlfwApp {
   ovrTexture eyeTextures[2];
   RenderUtils *oresRender = new RenderUtils(); // RU todo: Destroy this
   float ipd, eyeHeight;
-
+  //Initialise a tracker object using current HMD
+    YawTracker *trackObj = new YawTracker(hmd);
+    //Initialise a Tcp server to send data on port (def: 1700)
+    TcpServer *socketObj = new TcpServer(1700);
 public:
   DraftDisplay1OR() {
     eyeHeight = ovrHmd_GetFloat(hmd, OVR_KEY_EYE_HEIGHT, eyeHeight);
     ipd = ovrHmd_GetFloat(hmd, OVR_KEY_IPD, ipd);
-
+    
+		
     Stacks::modelview().top() = glm::lookAt(
       vec3(0, eyeHeight, 0.5f),
       vec3(0, eyeHeight, 0),
@@ -74,7 +78,11 @@ public:
   virtual void draw() {
     glm::uvec2 eyeSize = getSize();
     static ovrPosef eyePoses[2];    
-  
+    //SAY("Current Yaw - %.02f", trackObj->CurrentYaw());	
+    socketObj->UpdateYaw(trackObj->CurrentYaw());
+    socketObj->Write_Data();
+    socketObj->Read_Data();
+    int dist = socketObj->Get_EsData();
     ovrHmd_BeginFrame(hmd, getFrame());
     MatrixStack & mv = Stacks::modelview();
     for (int i = 0; i < ovrEye_Count; ++i) {
@@ -88,7 +96,7 @@ public:
       oglplus::Context::Clear().DepthBuffer();
       Stacks::withPush(mv, [&]{
         mv.preMultiply(eyeArgs.modelviewOffset);
-	oresRender->RenderFinal(eyeSize, 0);	
+	oresRender->RenderFinal(eyeSize, 0, dist);	
       });
     }
 

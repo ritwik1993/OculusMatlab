@@ -6,7 +6,7 @@ RenderUtils::RenderUtils() {
 void RenderUtils:: RenderHeatMap(glm::uvec2 eyeSize, int i){
     eyeSize.x /= 2;
     int k;
-    Platform::sleepMillis(1000);
+    Platform::sleepMillis(10);
     if (True) {
       k = i%3;
       switch (k){
@@ -77,10 +77,10 @@ void RenderUtils::RenderPositionMap(glm::uvec2 eyeSize) {
    glDisable(GL_SCISSOR_TEST);
 }
 
-void RenderUtils::RenderFinal(glm::uvec2 eyeSize, int i){
+void RenderUtils::RenderFinal(glm::uvec2 eyeSize, int i, int dist){
   RenderHeatMap(eyeSize, i);
   RenderPositionMap(eyeSize);
-  RenderOdomData(eyeSize, 50);
+  RenderOdomData(eyeSize, dist);
 }
 
 void RenderUtils::RenderOdomData(glm::uvec2 eyeSize, int distance){

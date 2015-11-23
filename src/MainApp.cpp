@@ -1,50 +1,107 @@
-/************************************************************************************
-
- Authors     :   Ritwik Ummalaneni <ritwik1993@gmail.com>
- Copyright   :   Copyright Ritwik Ummalaneni. All Rights reserved.
-
- Licensed under the Apache License, Version 2.0 (the "License");
- you may not use this file except in compliance with the License.
- You may obtain a copy of the License at
-
- http://www.apache.org/licenses/LICENSE-2.0
-
- Unless required by applicable law or agreed to in writing, software
- distributed under the License is distributed on an "AS IS" BASIS,
- WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- See the License for the specific language governing permissions and
- limitations under the License.
-
- ************************************************************************************/
-
 #include "Common.h"
 
-class MainApp {
-public:
-  int run() {
-    int i = 0;
-    ovrHmd hmd = ovrHmd_Create(0);    
-    if (!hmd) {
-      SAY_ERR("Unable to open Rift device");
-      return -1;
-    }
-    //Initialise a tracker object using current HMD
+static const glm::uvec2 WINDOW_SIZE(1280, 800);
+static const glm::ivec2 WINDOW_POS(100, 100);
+static const glm::uvec2 EYE_SIZE(
+    WINDOW_SIZE.x / 2, WINDOW_SIZE.y);
+
+struct PerEyeArg {
+  FramebufferWrapperPtr  framebuffer;
+  glm::mat4 projection;
+  glm::mat4 modelviewOffset;
+};
+
+int k =0;
+
+class MainApp: public RiftGlfwApp {
+  PerEyeArg eyes[2];
+  ovrTexture eyeTextures[2];
+  RenderUtils *oresRender = new RenderUtils(); // RU todo: Destroy this
+  float ipd, eyeHeight;
+  //Initialise a tracker object using current HMD
     YawTracker *trackObj = new YawTracker(hmd);
     //Initialise a Tcp server to send data on port (def: 1700)
     TcpServer *socketObj = new TcpServer(1700);
-    while ( i < 100 && trackObj->ReadTrackingState() != 0) {
-      SAY("Current Yaw - %.02f", trackObj->CurrentYaw());
-      socketObj->UpdateYaw(trackObj->CurrentYaw());
-      socketObj->Write_Data();
-      socketObj->Read_Data();
-      Platform::sleepMillis(100);
-      i++;
-      
+public:
+  MainApp() {
+    eyeHeight = ovrHmd_GetFloat(hmd, OVR_KEY_EYE_HEIGHT, eyeHeight);
+    ipd = ovrHmd_GetFloat(hmd, OVR_KEY_IPD, ipd);
+    
+		
+    Stacks::modelview().top() = glm::lookAt(
+      vec3(0, eyeHeight, 0.5f),
+      vec3(0, eyeHeight, 0),
+      Vectors::UP);
+  }
+
+  virtual void initGl() {
+    RiftGlfwApp::initGl();
+
+    ovrRenderAPIConfig cfg;
+    memset(&cfg, 0, sizeof(cfg));
+    cfg.Header.API = ovrRenderAPI_OpenGL;
+    cfg.Header.BackBufferSize = ovr::fromGlm(getSize());
+    cfg.Header.Multisample = 1;
+
+    int distortionCaps = ovrDistortionCap_Vignette;
+    ovrEyeRenderDesc eyeRenderDescs[2];
+    int configResult = ovrHmd_ConfigureRendering(hmd, &cfg,
+        distortionCaps, hmd->DefaultEyeFov, eyeRenderDescs);
+
+    for_each_eye([&](ovrEyeType eye){
+      PerEyeArg & eyeArgs = eyes[eye];
+      ovrFovPort fov = hmd->DefaultEyeFov[eye];
+      ovrSizei texSize = ovrHmd_GetFovTextureSize(hmd, eye, fov, 1.0f);
+      eyeArgs.framebuffer = FramebufferWrapperPtr(new FramebufferWrapper());
+      eyeArgs.framebuffer->init(ovr::toGlm(texSize));
+
+      ovrTextureHeader & textureHeader = eyeTextures[eye].Header;
+      textureHeader.API = ovrRenderAPI_OpenGL;
+      textureHeader.TextureSize = texSize;
+      textureHeader.RenderViewport.Size = texSize;
+      textureHeader.RenderViewport.Pos.x = 0;
+      textureHeader.RenderViewport.Pos.y = 0;
+      ((ovrGLTextureData&)eyeTextures[eye]).TexId =
+        oglplus::GetName(eyeArgs.framebuffer->color);
+
+      eyeArgs.modelviewOffset = glm::translate(glm::mat4(), 
+        ovr::toGlm(eyeRenderDescs[eye].HmdToEyeViewOffset));
+
+      ovrMatrix4f projection = ovrMatrix4f_Projection(fov, 0.01f, 100, true);
+      eyeArgs.projection = ovr::toGlm(projection);
+    });
+  }
+
+  virtual void finishFrame() {
+  }
+
+  virtual void draw() {
+    glm::uvec2 eyeSize = getSize();
+    static ovrPosef eyePoses[2];    
+    //SAY("Current Yaw - %.02f", trackObj->CurrentYaw());	
+    socketObj->UpdateYaw(trackObj->CurrentYaw());
+    socketObj->Write_Data();
+    socketObj->Read_Data();
+    int dist = socketObj->Get_EsData();
+    ovrHmd_BeginFrame(hmd, getFrame());
+    MatrixStack & mv = Stacks::modelview();
+    for (int i = 0; i < ovrEye_Count; ++i) {
+      ovrEyeType eye = hmd->EyeRenderOrder[i];
+      PerEyeArg & eyeArgs = eyes[eye];
+      Stacks::projection().top() = eyeArgs.projection;
+
+      eyeArgs.framebuffer->Bind();
+      glClearColor(0.0f,0.0f,0.0f,0.0f);
+      glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+      oglplus::Context::Clear().DepthBuffer();
+      Stacks::withPush(mv, [&]{
+        mv.preMultiply(eyeArgs.modelviewOffset);
+	oresRender->RenderFinal(eyeSize, 0, dist);	
+      });
     }
-    delete trackObj;
-    delete socketObj;
-    ovrHmd_Destroy(hmd);
-    return 0;
+
+    k++;
+    ovrHmd_EndFrame(hmd, eyePoses, eyeTextures);
   }
 };
 
