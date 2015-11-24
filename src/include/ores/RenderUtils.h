@@ -5,8 +5,10 @@ class RenderUtils {
  private:
   float         windowAspect{ 1.0f };
   float         windowAspectInverse{ 1.0f };
+  double r,g,b;
  public:
   RenderUtils();
+  void ConvertInt2RG(int);
   void RenderHeatMap(glm::uvec2, int);
   void RenderMessageAt( std::string, glm::uvec2, glm::vec2);
   void RenderPositionMap(glm::uvec2);
