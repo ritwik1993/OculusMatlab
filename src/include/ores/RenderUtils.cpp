@@ -1,6 +1,42 @@
 #include "Common.h"
 
-RenderUtils::RenderUtils() {
+// An array of 3 vectors which represents 3 vertices
+static const GLfloat g_vertex_buffer_data[] = {
+  650.0f/960.0f - 1.0f, 370.0f/540.0f - 1.0f, 0.0f,
+  662.5f/960.0f - 1.0f, 365.0f/540.0f - 1.0f, 0.0f,
+  675.0f/960.0f - 1.0f, 362.5f/540.0f - 1.0f, 0.0f,
+  682.5f/960.0f - 1.0f, 365.0f/540.0f - 1.0f, 0.0f,
+  700.0f/960.0f - 1.0f, 370.0f/540.0f - 1.0f, 0.0f,
+  700.0f/960.0f - 1.0f, 410.0f/540.0f - 1.0f, 0.0f,
+  682.5f/960.0f - 1.0f, 415.0f/540.0f - 1.0f, 0.0f,
+  675.0f/960.0f - 1.0f, 417.5f/540.0f - 1.0f, 0.0f,
+  662.5f/960.0f - 1.0f, 415.0f/540.0f - 1.0f, 0.0f,
+  650.0f/960.0f - 1.0f, 410.0f/540.0f - 1.0f, 0.0f,
+  //610.0f/960.0f - 1.0f, 410.0f/540.0f - 1.0f, 0.0f,
+};
+
+ GLfloat g_vertex_rotated_buffer_data[30];
+
+RenderUtils::RenderUtils() { 
+}
+
+void RenderUtils::RotateObject(float angle){
+  int i;
+  //std::cout << g_vertex_rotated_buffer_data << std::endl;
+  for (i = 0;i < 30; i = i+3)
+    {
+      g_vertex_rotated_buffer_data[i] = cos(angle) * g_vertex_buffer_data[i]
+	- sin(angle) * g_vertex_buffer_data[i+1];
+       g_vertex_rotated_buffer_data[i+1] = sin(angle) * g_vertex_buffer_data[i]
+	+ cos(angle) * g_vertex_buffer_data[i+1];
+    }
+}
+
+void RenderUtils::InitVAO() {
+   //Method to initialise a vertex array object
+  GLuint VertexArrayID;
+  glGenVertexArrays(1, &VertexArrayID);
+  glBindVertexArray(VertexArrayID);  
 }
 
 void RenderUtils::ConvertInt2RG(int i){
@@ -9,21 +45,15 @@ void RenderUtils::ConvertInt2RG(int i){
   b = 0;
 }
 
-
 void RenderUtils:: RenderHeatMap(glm::uvec2 eyeSize, int i){
-    eyeSize.x /= 2;
     Platform::sleepMillis(10);
     ConvertInt2RG(i);
+    //std::cout << sqrt(4) << std::endl;
     if (True) {
         glEnable(GL_SCISSOR_TEST);
         glScissor(0, 2*eyeSize.y/3, eyeSize.x, eyeSize.y/3);
         glClearColor(r, g, b, 1);
         glClear(GL_COLOR_BUFFER_BIT);
-
-        glScissor( eyeSize.x, 2*eyeSize.y/3, eyeSize.x, eyeSize.y/3);
-        glClearColor(r, g, b, 1);
-        glClear(GL_COLOR_BUFFER_BIT);
-
         glDisable(GL_SCISSOR_TEST);      
     }
 }
@@ -44,11 +74,10 @@ void RenderUtils::RenderMessageAt(std::string str, glm::uvec2 windowSize, glm::v
   mv.pop();
 }
 
-void RenderUtils::RenderPositionMap(glm::uvec2 eyeSize) {
-   eyeSize.x /= 2;   
+void RenderUtils::RenderPositionMap(glm::uvec2 eyeSize) { 
    glEnable(GL_SCISSOR_TEST);
-   glScissor(250, 300, eyeSize.x/3,eyeSize.y/3);
-   glClearColor(0.5,0.5,0.5,0.5);
+   glScissor(250, 350, 320, 320);
+   glClearColor(0.5,0.5,0.5,0.1);
    glClear(GL_COLOR_BUFFER_BIT);
    glDisable(GL_SCISSOR_TEST);
 }
@@ -56,6 +85,7 @@ void RenderUtils::RenderPositionMap(glm::uvec2 eyeSize) {
 void RenderUtils::RenderFinal(glm::uvec2 eyeSize, int i, int dist){
   RenderHeatMap(eyeSize, dist);
   RenderPositionMap(eyeSize);
+  RenderGantry(eyeSize);
   RenderOdomData(eyeSize, dist);
 }
 
@@ -68,5 +98,32 @@ void RenderUtils::RenderOdomData(glm::uvec2 eyeSize, int distance){
    
 }
 
+void RenderUtils::RenderGantry(glm::uvec2 eyeSize){
+  InitVAO();
+  // This will identify our vertex buffer  
+  GLuint vertexbuffer;
+  // Generate 1 buffer, put the resulting identifier in vertexbuffer
+  glGenBuffers(1, &vertexbuffer);
+ // The following commands will talk about our 'vertexbuffer' buffer
+  glBindBuffer(GL_ARRAY_BUFFER, vertexbuffer);
+  // Give our vertices to OpenGL.
+  RotateObject(40.0* PI / 180);
+  glBufferData(GL_ARRAY_BUFFER, sizeof(g_vertex_rotated_buffer_data), g_vertex_rotated_buffer_data, GL_STATIC_DRAW); 
+  glEnableVertexAttribArray(0);
+ 
+  glBindBuffer(GL_ARRAY_BUFFER, vertexbuffer);
+  //std::cout << "checked" << std::endl;
+  glVertexAttribPointer(
+ 			0,
+ 			3,
+ 			GL_FLOAT,
+ 			GL_FALSE,
+ 			0,
+ 			(void*)0
+ 			);
+  //glRotatef(45,0.0f,0.0f,1.0f);
+  glDrawArrays(GL_TRIANGLE_FAN, 0, 10);
+  glDisableVertexAttribArray(0);
+}
 
 

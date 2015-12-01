@@ -25,8 +25,7 @@ class MainApp: public RiftGlfwApp {
 public:
   MainApp() {
     eyeHeight = ovrHmd_GetFloat(hmd, OVR_KEY_EYE_HEIGHT, eyeHeight);
-    ipd = ovrHmd_GetFloat(hmd, OVR_KEY_IPD, ipd);
-    
+    ipd = ovrHmd_GetFloat(hmd, OVR_KEY_IPD, ipd);    
 		
     Stacks::modelview().top() = glm::lookAt(
       vec3(0, eyeHeight, 0.5f),
@@ -47,7 +46,7 @@ public:
     ovrEyeRenderDesc eyeRenderDescs[2];
     int configResult = ovrHmd_ConfigureRendering(hmd, &cfg,
         distortionCaps, hmd->DefaultEyeFov, eyeRenderDescs);
-
+    //oresRender->InitVAO();
     for_each_eye([&](ovrEyeType eye){
       PerEyeArg & eyeArgs = eyes[eye];
       ovrFovPort fov = hmd->DefaultEyeFov[eye];
@@ -69,6 +68,7 @@ public:
 
       ovrMatrix4f projection = ovrMatrix4f_Projection(fov, 0.01f, 100, true);
       eyeArgs.projection = ovr::toGlm(projection);
+     
     });
   }
 
