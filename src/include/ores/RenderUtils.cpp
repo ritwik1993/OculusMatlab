@@ -25,10 +25,11 @@ void RenderUtils::RotateObject(float angle){
   //std::cout << g_vertex_rotated_buffer_data << std::endl;
   for (i = 0;i < 30; i = i+3)
     {
-      g_vertex_rotated_buffer_data[i] = cos(angle) * g_vertex_buffer_data[i]
-	- sin(angle) * g_vertex_buffer_data[i+1];
-       g_vertex_rotated_buffer_data[i+1] = sin(angle) * g_vertex_buffer_data[i]
-	+ cos(angle) * g_vertex_buffer_data[i+1];
+      g_vertex_rotated_buffer_data[i] = (cos(angle) * (g_vertex_buffer_data[i]+0.29f)
+					 - sin(angle) * (g_vertex_buffer_data[i+1]+0.277f)) - 0.29f;
+      g_vertex_rotated_buffer_data[i+1] = (sin(angle) * (g_vertex_buffer_data[i]+0.29f)
+					   + cos(angle) * (g_vertex_buffer_data[i+1]+0.277f)) - 0.27f;
+       g_vertex_rotated_buffer_data[i+2] =  g_vertex_buffer_data[i+2];
     }
 }
 
@@ -46,7 +47,7 @@ void RenderUtils::ConvertInt2RG(int i){
 }
 
 void RenderUtils:: RenderHeatMap(glm::uvec2 eyeSize, int i){
-    Platform::sleepMillis(10);
+    Platform::sleepMillis(1);
     ConvertInt2RG(i);
     //std::cout << sqrt(4) << std::endl;
     if (True) {
@@ -85,7 +86,7 @@ void RenderUtils::RenderPositionMap(glm::uvec2 eyeSize) {
 void RenderUtils::RenderFinal(glm::uvec2 eyeSize, int i, int dist){
   RenderHeatMap(eyeSize, dist);
   RenderPositionMap(eyeSize);
-  RenderGantry(eyeSize);
+  RenderGantry(eyeSize, dist);
   RenderOdomData(eyeSize, dist);
 }
 
@@ -98,7 +99,7 @@ void RenderUtils::RenderOdomData(glm::uvec2 eyeSize, int distance){
    
 }
 
-void RenderUtils::RenderGantry(glm::uvec2 eyeSize){
+void RenderUtils::RenderGantry(glm::uvec2 eyeSize, int angle){
   InitVAO();
   // This will identify our vertex buffer  
   GLuint vertexbuffer;
@@ -107,7 +108,7 @@ void RenderUtils::RenderGantry(glm::uvec2 eyeSize){
  // The following commands will talk about our 'vertexbuffer' buffer
   glBindBuffer(GL_ARRAY_BUFFER, vertexbuffer);
   // Give our vertices to OpenGL.
-  RotateObject(40.0* PI / 180);
+  RotateObject(angle* PI / 180);
   glBufferData(GL_ARRAY_BUFFER, sizeof(g_vertex_rotated_buffer_data), g_vertex_rotated_buffer_data, GL_STATIC_DRAW); 
   glEnableVertexAttribArray(0);
  
