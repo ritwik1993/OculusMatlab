@@ -16,5 +16,6 @@ class RenderUtils {
   void RenderFinal(glm::uvec2, int, int);
   void RenderOdomData(glm::uvec2, int);
   void RenderGantry(glm::uvec2, int);
+  void RenderPhantom(glm::uvec2);
   void RotateObject(float);
 };

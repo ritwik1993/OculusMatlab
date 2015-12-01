@@ -15,6 +15,12 @@ static const GLfloat g_vertex_buffer_data[] = {
   //610.0f/960.0f - 1.0f, 410.0f/540.0f - 1.0f, 0.0f,
 };
 
+// A vectors which represents a phantom
+static const GLfloat g_phantom_buffer_data[] = {
+  0.0f, 0.25f, 0.0f,
+  //610.0f/960.0f - 1.0f, 410.0f/540.0f - 1.0f, 0.0f,
+};
+
  GLfloat g_vertex_rotated_buffer_data[30];
 
 RenderUtils::RenderUtils() { 
@@ -87,6 +93,7 @@ void RenderUtils::RenderFinal(glm::uvec2 eyeSize, int i, int dist){
   RenderHeatMap(eyeSize, dist);
   RenderPositionMap(eyeSize);
   RenderGantry(eyeSize, dist);
+  RenderPhantom(eyeSize);
   RenderOdomData(eyeSize, dist);
 }
 
@@ -126,5 +133,34 @@ void RenderUtils::RenderGantry(glm::uvec2 eyeSize, int angle){
   glDrawArrays(GL_TRIANGLE_FAN, 0, 10);
   glDisableVertexAttribArray(0);
 }
+
+void RenderUtils::RenderPhantom(glm::uvec2 eyeSize){
+  InitVAO();
+  glEnable(GL_PROGRAM_POINT_SIZE);
+  //gl_PointSize = 10.0;
+  // This will identify our vertex buffer  
+  GLuint vertexbuffer;
+  // Generate 1 buffer, put the resulting identifier in vertexbuffer
+  glGenBuffers(1, &vertexbuffer);
+ // The following commands will talk about our 'vertexbuffer' buffer
+  glBindBuffer(GL_ARRAY_BUFFER, vertexbuffer);
+  // Give our vertices to OpenGL.
+  glBufferData(GL_ARRAY_BUFFER, sizeof(g_phantom_buffer_data), g_phantom_buffer_data, GL_STATIC_DRAW); 
+  glEnableVertexAttribArray(0); 
+  glBindBuffer(GL_ARRAY_BUFFER, vertexbuffer);
+  //std::cout << "checked" << std::endl;
+  glVertexAttribPointer(
+ 			0,
+ 			3,
+ 			GL_FLOAT,
+ 			GL_FALSE,
+ 			0,
+ 			(void*)0
+ 			);
+  //glRotatef(45,0.0f,0.0f,1.0f);
+  glDrawArrays(GL_POINTS, 0, 1);
+  glDisableVertexAttribArray(0);
+}
+  
 
 
