@@ -82,7 +82,8 @@ public:
     socketObj->UpdateYaw(trackObj->CurrentYaw());
     socketObj->Write_Data();
     socketObj->Read_Data();
-    int dist = socketObj->Get_EsData();
+    float yaw = socketObj->Get_EsDataYaw();
+    float sES = socketObj->Get_EsDatasES();
     ovrHmd_BeginFrame(hmd, getFrame());
     MatrixStack & mv = Stacks::modelview();
     for (int i = 0; i < ovrEye_Count; ++i) {
@@ -96,7 +97,7 @@ public:
       oglplus::Context::Clear().DepthBuffer();
       Stacks::withPush(mv, [&]{
         mv.preMultiply(eyeArgs.modelviewOffset);
-	oresRender->RenderFinal(eyeSize, 0, dist);	
+	oresRender->RenderFinal(eyeSize, yaw, 0, sES, 0);	
       });
     }
 

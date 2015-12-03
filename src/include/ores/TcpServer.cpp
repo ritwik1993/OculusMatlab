@@ -42,17 +42,33 @@ void TcpServer::Read_Handler(const boost::system::error_code& ec,
 				std::size_t bytes_transferred){
   if (!ec)
     {
-      std::string line;
+      std::string line1, line2, line3, line4;
      std::istream is(&input_buffer_);
      std::string test;
      is >> test;
-     es_data = std::stoi(test);
-     //std::cout << "test message: " << test << std::endl;
-     std::getline(is, line);
-     if (!line.empty())
+     std::istringstream iss(test);
+     getline(iss, line1, ',');
+     getline(iss, line2, ',');
+     getline(iss, line3, ',');
+     getline(iss, line4, ',');
+    
+     if (!line1.empty() )
        {
-	 //std::cout << "Recieved: " << line << std::endl;
+     es_dataYaw = std::stof(line1);
+            }
+     if (!line2.empty())
+       {
+
+     es_dataPOS = std::stof(line2);
        }
+     if ( !line3.empty())
+       {
+     es_datasES = std::stof(line3);
+       }
+     if (!line4.empty())
+       {
+     es_dataDist = std::stof(line4);
+       } 
     }
   else
     std::cout << "Error reading:" << ec.message() << std::endl;}
@@ -83,8 +99,8 @@ void TcpServer::UpdateYaw(double data) {
 }  
 
 void TcpServer::Read_Data(){
-  if (connectMode){
-    async_read_until(socket, input_buffer_, "\n" , boost::bind(&TcpServer::Read_Handler, this,
+  if (connectMode){ 
+    async_read_until(socket, input_buffer_, "\r" , boost::bind(&TcpServer::Read_Handler, this,
     						  placeholders::error,
 							       placeholders::bytes_transferred));
      svc.reset();
@@ -92,8 +108,20 @@ void TcpServer::Read_Data(){
   }
 }
 
-int TcpServer::Get_EsData(){
-  return es_data;
+float TcpServer::Get_EsDataYaw(){
+  return es_dataYaw;
+}
+
+float TcpServer::Get_EsDataPOS(){
+  return es_dataPOS;
+}
+
+float TcpServer::Get_EsDatasES(){
+  return es_datasES;
+}
+
+float TcpServer::Get_EsDataDist(){
+  return es_dataDist;
 }
 
 TcpServer::~TcpServer(){

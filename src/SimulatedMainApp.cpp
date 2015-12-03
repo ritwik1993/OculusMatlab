@@ -13,7 +13,7 @@ struct PerEyeArg {
 
 int k =0;
 
-class MainApp: public RiftGlfwApp {
+class SimulatedMainApp: public RiftGlfwApp {
   PerEyeArg eyes[2];
   ovrTexture eyeTextures[2];
   RenderUtils *oresRender = new RenderUtils(); // RU todo: Destroy this
@@ -23,7 +23,7 @@ class MainApp: public RiftGlfwApp {
     //Initialise a Tcp server to send data on port (def: 1700)
     TcpServer *socketObj = new TcpServer(1700);
 public:
-  MainApp() {
+  SimulatedMainApp() {
     eyeHeight = ovrHmd_GetFloat(hmd, OVR_KEY_EYE_HEIGHT, eyeHeight);
     ipd = ovrHmd_GetFloat(hmd, OVR_KEY_IPD, ipd);    
 		
@@ -82,7 +82,10 @@ public:
     socketObj->UpdateYaw(trackObj->CurrentYaw());
     socketObj->Write_Data();
     socketObj->Read_Data();
-    int dist = socketObj->Get_EsData();
+    float esYaw = socketObj->Get_EsDataYaw();
+    float esPOS = socketObj->Get_EsDataPOS();
+    float essES = socketObj->Get_EsDatasES();
+    float esDist = socketObj->Get_EsDataDist();
     ovrHmd_BeginFrame(hmd, getFrame());
     MatrixStack & mv = Stacks::modelview();
     for (int i = 0; i < ovrEye_Count; ++i) {
@@ -92,12 +95,11 @@ public:
 
       eyeArgs.framebuffer->Bind();
       glClearColor(0.0f,0.0f,0.0f,0.0f);
-      glClea
-	r(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+      glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
       oglplus::Context::Clear().DepthBuffer();
       Stacks::withPush(mv, [&]{
         mv.preMultiply(eyeArgs.modelviewOffset);
-	oresRender->RenderFinal(eyeSize, 0, dist);	
+	oresRender->RenderFinal(eyeSize, esYaw, esPOS, essES, esDist);	
       });
     }
 
@@ -106,4 +108,4 @@ public:
   }
 };
 
-RUN_OVR_APP(MainApp);
+RUN_OVR_APP(SimulatedMainApp);

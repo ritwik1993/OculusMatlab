@@ -32,7 +32,10 @@ class TcpServer {
   tcp::socket socket{svc};
   
   double yawData = 0;
-  int es_data = 0;
+  float es_dataYaw = 0;
+  float es_dataPOS = 0;
+  float es_datasES = 0;
+  float es_dataDist = 0;
   unsigned short ipPort;
   bool connectMode = 0;
   streambuf input_buffer_, output_buffer_;
@@ -46,6 +49,10 @@ class TcpServer {
   void Write_Data();
   void Read_Data();
   void UpdateYaw(double);
-  int Get_EsData();
+  float Get_EsDataYaw();
+  float Get_EsDataPOS();
+  float Get_EsDatasES();
+  float Get_EsDataDist();
+
   ~TcpServer();
 };

@@ -9,13 +9,13 @@ class RenderUtils {
  public:
   RenderUtils();
   void InitVAO();
-  void ConvertInt2RG(int);
-  void RenderHeatMap(glm::uvec2, int);
+  void ConvertInt2RG(float);
+  void RenderHeatMap(glm::uvec2, float);
   void RenderMessageAt( std::string, glm::uvec2, glm::vec2);
   void RenderPositionMap(glm::uvec2);
-  void RenderFinal(glm::uvec2, int, int);
-  void RenderOdomData(glm::uvec2, int);
-  void RenderGantry(glm::uvec2, int);
+  void RenderFinal(glm::uvec2, float, float, float, float);
+  void RenderOdomData(glm::uvec2, float);
+  void RenderGantry(glm::uvec2, float, float);
   void RenderPhantom(glm::uvec2);
-  void RotateObject(float);
+  void RotateObject(float, float, float);
 };

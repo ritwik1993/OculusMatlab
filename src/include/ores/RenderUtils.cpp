@@ -17,7 +17,7 @@ static const GLfloat g_vertex_buffer_data[] = {
 
 // A vectors which represents a phantom
 static const GLfloat g_phantom_buffer_data[] = {
-  0.0f, 0.25f, 0.0f,
+  800.0f/960.0f - 1.0f, 395.0f/540.0f - 1.0f, 0.0f,
   //610.0f/960.0f - 1.0f, 410.0f/540.0f - 1.0f, 0.0f,
 };
 
@@ -26,7 +26,7 @@ static const GLfloat g_phantom_buffer_data[] = {
 RenderUtils::RenderUtils() { 
 }
 
-void RenderUtils::RotateObject(float angle){
+void RenderUtils::RotateObject(float angle, float x, float y){
   int i;
   //std::cout << g_vertex_rotated_buffer_data << std::endl;
   for (i = 0;i < 30; i = i+3)
@@ -34,7 +34,7 @@ void RenderUtils::RotateObject(float angle){
       g_vertex_rotated_buffer_data[i] = (cos(angle) * (g_vertex_buffer_data[i]+0.29f)
 					 - sin(angle) * (g_vertex_buffer_data[i+1]+0.277f)) - 0.29f;
       g_vertex_rotated_buffer_data[i+1] = (sin(angle) * (g_vertex_buffer_data[i]+0.29f)
-					   + cos(angle) * (g_vertex_buffer_data[i+1]+0.277f)) - 0.27f;
+					   + cos(angle) * (g_vertex_buffer_data[i+1]+0.277f)) - 0.27f + y/200.0f;
        g_vertex_rotated_buffer_data[i+2] =  g_vertex_buffer_data[i+2];
     }
 }
@@ -46,13 +46,13 @@ void RenderUtils::InitVAO() {
   glBindVertexArray(VertexArrayID);  
 }
 
-void RenderUtils::ConvertInt2RG(int i){
-  r = double(i) / 100.0;
-  g = (100.0 - double(i)) / 100.0;
+void RenderUtils::ConvertInt2RG(float i){
+  g = double(i) / 100.0;
+  r = (100.0 - double(i)) / 100.0;
   b = 0;
 }
 
-void RenderUtils:: RenderHeatMap(glm::uvec2 eyeSize, int i){
+void RenderUtils:: RenderHeatMap(glm::uvec2 eyeSize, float i){
     Platform::sleepMillis(1);
     ConvertInt2RG(i);
     //std::cout << sqrt(4) << std::endl;
@@ -89,24 +89,25 @@ void RenderUtils::RenderPositionMap(glm::uvec2 eyeSize) {
    glDisable(GL_SCISSOR_TEST);
 }
 
-void RenderUtils::RenderFinal(glm::uvec2 eyeSize, int i, int dist){
-  RenderHeatMap(eyeSize, dist);
+void RenderUtils::RenderFinal(glm::uvec2 eyeSize, float Yaw, float POS,
+			      float sES, float dist){
+  RenderHeatMap(eyeSize, sES);
   RenderPositionMap(eyeSize);
-  RenderGantry(eyeSize, dist);
+  RenderGantry(eyeSize, Yaw, POS);
   RenderPhantom(eyeSize);
   RenderOdomData(eyeSize, dist);
 }
 
-void RenderUtils::RenderOdomData(glm::uvec2 eyeSize, int distance){
+void RenderUtils::RenderOdomData(glm::uvec2 eyeSize, float distance){
  std::string message = Platform::format(
-					     "Estimated Distance: %0.2d \n"
+					     "Estimated Distance: %0.2f cm \n"
 					     "Object Type: Conductor",
 					     distance);
  RenderMessageAt(message, eyeSize, glm::vec2(0.02f, -0.02f));
    
 }
 
-void RenderUtils::RenderGantry(glm::uvec2 eyeSize, int angle){
+void RenderUtils::RenderGantry(glm::uvec2 eyeSize, float angle, float dist){
   InitVAO();
   // This will identify our vertex buffer  
   GLuint vertexbuffer;
@@ -115,7 +116,7 @@ void RenderUtils::RenderGantry(glm::uvec2 eyeSize, int angle){
  // The following commands will talk about our 'vertexbuffer' buffer
   glBindBuffer(GL_ARRAY_BUFFER, vertexbuffer);
   // Give our vertices to OpenGL.
-  RotateObject(angle* PI / 180);
+  RotateObject(angle* PI / 180, 0.0, dist);
   glBufferData(GL_ARRAY_BUFFER, sizeof(g_vertex_rotated_buffer_data), g_vertex_rotated_buffer_data, GL_STATIC_DRAW); 
   glEnableVertexAttribArray(0);
  
@@ -137,7 +138,7 @@ void RenderUtils::RenderGantry(glm::uvec2 eyeSize, int angle){
 void RenderUtils::RenderPhantom(glm::uvec2 eyeSize){
   InitVAO();
   glEnable(GL_PROGRAM_POINT_SIZE);
-  //gl_PointSize = 10.0;
+  glPointSize(10);
   // This will identify our vertex buffer  
   GLuint vertexbuffer;
   // Generate 1 buffer, put the resulting identifier in vertexbuffer
