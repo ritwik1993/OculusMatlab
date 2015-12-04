@@ -25,11 +25,15 @@ class YawTracker {
   ovrHmd hmd;
   ovrTrackingState state;
   ovrQuatf orientation;
+  ovrVector3f position;
+  double currentYaw;
+  float currentX, currentY;
   glm::quat q;
   glm::vec3 euler;
   bool trackingState;
  public:
   YawTracker(ovrHmd riftObj);
+  void ReadState();
   double CurrentYaw();
   bool ReadTrackingState();
 };

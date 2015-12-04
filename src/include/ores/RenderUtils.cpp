@@ -21,7 +21,10 @@ static const GLfloat g_phantom_buffer_data[] = {
   //610.0f/960.0f - 1.0f, 410.0f/540.0f - 1.0f, 0.0f,
 };
 
- GLfloat g_vertex_rotated_buffer_data[30];
+int waitCounter = 0;
+
+GLfloat g_vertex_rotated_buffer_data[30];
+std::vector< GLfloat> g_breadcrumb_buffer_dataVec;
 
 RenderUtils::RenderUtils() { 
 }
@@ -32,12 +35,21 @@ void RenderUtils::RotateObject(float angle, float x, float y){
   for (i = 0;i < 30; i = i+3)
     {
       g_vertex_rotated_buffer_data[i] = (cos(angle) * (g_vertex_buffer_data[i]+0.29f)
-					 - sin(angle) * (g_vertex_buffer_data[i+1]+0.277f)) - 0.29f;
+					 - sin(angle) * (g_vertex_buffer_data[i+1]+0.277f)) - 0.29f + x/200.0f;
       g_vertex_rotated_buffer_data[i+1] = (sin(angle) * (g_vertex_buffer_data[i]+0.29f)
 					   + cos(angle) * (g_vertex_buffer_data[i+1]+0.277f)) - 0.27f + y/200.0f;
        g_vertex_rotated_buffer_data[i+2] =  g_vertex_buffer_data[i+2];
     }
+  if (waitCounter == 0){
+  g_breadcrumb_buffer_dataVec.push_back(g_vertex_rotated_buffer_data[6]);
+  g_breadcrumb_buffer_dataVec.push_back(g_vertex_rotated_buffer_data[7]);
+  g_breadcrumb_buffer_dataVec.push_back(g_vertex_rotated_buffer_data[8]);
+  waitCounter = 100;
+  }
+  waitCounter = waitCounter - 1;
 }
+
+
 
 void RenderUtils::InitVAO() {
    //Method to initialise a vertex array object
@@ -94,6 +106,7 @@ void RenderUtils::RenderFinal(glm::uvec2 eyeSize, float Yaw, float POS,
   RenderHeatMap(eyeSize, sES);
   RenderPositionMap(eyeSize);
   RenderGantry(eyeSize, Yaw, POS);
+  RenderBreadCrumb(eyeSize);
   RenderPhantom(eyeSize);
   RenderOdomData(eyeSize, dist);
 }
@@ -162,6 +175,38 @@ void RenderUtils::RenderPhantom(glm::uvec2 eyeSize){
   glDrawArrays(GL_POINTS, 0, 1);
   glDisableVertexAttribArray(0);
 }
-  
+
+void RenderUtils::RenderBreadCrumb(glm::uvec2 eyeSize){
+  InitVAO();
+  glEnable(GL_PROGRAM_POINT_SIZE);
+  glPointSize(3);
+  GLfloat g_breadcrumb_buffer_data[g_breadcrumb_buffer_dataVec.size()];
+  std::copy(g_breadcrumb_buffer_dataVec.begin(),
+	    g_breadcrumb_buffer_dataVec.end(),
+	    g_breadcrumb_buffer_data);
+  // This will identify our vertex buffer  
+  GLuint vertexbuffer;
+  // Generate 1 buffer, put the resulting identifier in vertexbuffer
+  glGenBuffers(1, &vertexbuffer);
+ // The following commands will talk about our 'vertexbuffer' buffer
+  glBindBuffer(GL_ARRAY_BUFFER, vertexbuffer);
+  // Give our vertices to OpenGL.
+  glBufferData(GL_ARRAY_BUFFER, sizeof(g_breadcrumb_buffer_data), g_breadcrumb_buffer_data, GL_DYNAMIC_DRAW); 
+  glEnableVertexAttribArray(0); 
+  glBindBuffer(GL_ARRAY_BUFFER, vertexbuffer);
+  glVertexAttribPointer(
+ 			0,
+ 			3,
+ 			GL_FLOAT,
+ 			GL_FALSE,
+ 			0,
+ 			(void*)0
+ 			);
+  //glRotatef(45,0.0f,0.0f,1.0f);
+  int n = g_breadcrumb_buffer_dataVec.size();
+  // std::cout << sizeof(g_breadcrumb_buffer_data)/sizeof(g_breadcrumb_buffer_data[0]) << std::endl;
+  glDrawArrays(GL_POINTS, 0, n);
+  glDisableVertexAttribArray(0);
+}
 
 

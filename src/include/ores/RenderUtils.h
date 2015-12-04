@@ -18,4 +18,5 @@ class RenderUtils {
   void RenderGantry(glm::uvec2, float, float);
   void RenderPhantom(glm::uvec2);
   void RotateObject(float, float, float);
+  void RenderBreadCrumb(glm::uvec2);
 };

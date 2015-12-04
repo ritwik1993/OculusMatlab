@@ -31,13 +31,21 @@ YawTracker::YawTracker(ovrHmd riftObj)
   else trackingState = 1;
 }
  
-//Method to read current yaw in degrees
-double YawTracker::CurrentYaw() {
+//Method to read current yaw in degrees and X,Y states
+void YawTracker::ReadState() {
   state = ovrHmd_GetTrackingState(hmd, 0);
   orientation = state.HeadPose.ThePose.Orientation;
+  position = state.HeadPose.ThePose.Position;
+  currentX = position.x;
+  currentY = position.y;
   q = glm::make_quat(&orientation.x);
   euler = glm::eulerAngles(q);
-  return ( euler.y * RADIANS_TO_DEGREES);
+  currentYaw =  euler.y * RADIANS_TO_DEGREES;
+}
+
+double YawTracker::CurrentYaw() {
+  ReadState();
+  return ( currentYaw);
 }
 
 bool YawTracker::ReadTrackingState() {
