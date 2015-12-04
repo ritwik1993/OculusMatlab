@@ -32,6 +32,8 @@ class TcpServer {
   tcp::socket socket{svc};
   
   double yawData = 0;
+  float xData = 0;
+  float yData = 0;
   float es_dataYaw = 0;
   float es_dataPOS = 0;
   float es_datasES = 0;
@@ -49,6 +51,8 @@ class TcpServer {
   void Write_Data();
   void Read_Data();
   void UpdateYaw(double);
+  void UpdateX(float);
+  void UpdateY(float);
   float Get_EsDataYaw();
   float Get_EsDataPOS();
   float Get_EsDatasES();

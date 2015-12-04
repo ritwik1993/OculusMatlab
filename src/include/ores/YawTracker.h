@@ -35,6 +35,8 @@ class YawTracker {
   YawTracker(ovrHmd riftObj);
   void ReadState();
   double CurrentYaw();
+  float CurrentX();
+  float CurrentY();
   bool ReadTrackingState();
 };
   

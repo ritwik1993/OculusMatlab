@@ -80,6 +80,8 @@ public:
     static ovrPosef eyePoses[2];    
     //SAY("Current Yaw - %.02f", trackObj->CurrentYaw());	
     socketObj->UpdateYaw(trackObj->CurrentYaw());
+    socketObj->UpdateX(trackObj->CurrentX() * 100); // convert to cm
+    socketObj->UpdateY(trackObj->CurrentY() * 100); //  convert to cm
     socketObj->Write_Data();
     socketObj->Read_Data();
     float yaw = socketObj->Get_EsDataYaw();

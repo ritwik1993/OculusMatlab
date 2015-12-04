@@ -13,8 +13,10 @@ while (true)
         data = t.read;
         data = char(data);
         yawData = strread(data);
-        yaw = yawData(end);
-        X = ['The current yaw is: ', num2str(yaw)];
+        yaw = yawData(end - 2);
+        xpos = yawData(end -1);
+        ypos = yawData(end);
+        X = ['The current state (Yaw, X, Y) is: ', num2str(yaw), ' ', num2str(xpos), ' ', num2str(ypos)];
         disp(X);
         t.write([uint8(num2str(0)) 44  uint8(num2str(POS(i))) 44 uint8(num2str(ES(i))) 44 uint8(num2str(dist)) 13]);
         i = i+1;

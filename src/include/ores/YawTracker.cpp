@@ -37,7 +37,8 @@ void YawTracker::ReadState() {
   orientation = state.HeadPose.ThePose.Orientation;
   position = state.HeadPose.ThePose.Position;
   currentX = position.x;
-  currentY = position.y;
+  currentY = -position.z; //we need Y to be along the axis of the sensorpod
+  // which is in the -ve z direction of the OR
   q = glm::make_quat(&orientation.x);
   euler = glm::eulerAngles(q);
   currentYaw =  euler.y * RADIANS_TO_DEGREES;
@@ -46,6 +47,20 @@ void YawTracker::ReadState() {
 double YawTracker::CurrentYaw() {
   ReadState();
   return ( currentYaw);
+}
+
+float YawTracker::CurrentX() {
+  if (!ovrStatus_PositionConnected && !ovrStatus_PositionTracked)
+    return (0.0);
+  ReadState();
+  return ( currentX);
+}
+
+float YawTracker::CurrentY() {
+   if (!ovrStatus_PositionConnected && !ovrStatus_PositionTracked)
+     return (0.0);
+  ReadState();
+  return ( currentY);
 }
 
 bool YawTracker::ReadTrackingState() {

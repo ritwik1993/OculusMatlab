@@ -52,23 +52,14 @@ void TcpServer::Read_Handler(const boost::system::error_code& ec,
      getline(iss, line3, ',');
      getline(iss, line4, ',');
     
-     if (!line1.empty() )
+     if (!line1.empty() && !line2.empty()
+	 && !line3.empty() && !line4.empty())
        {
-     es_dataYaw = std::stof(line1);
+	 es_dataYaw = std::stof(line1);
+	 es_dataPOS = std::stof(line2);
+	 es_datasES = std::stof(line3);
+	 es_dataDist = std::stof(line4);	 
             }
-     if (!line2.empty())
-       {
-
-     es_dataPOS = std::stof(line2);
-       }
-     if ( !line3.empty())
-       {
-     es_datasES = std::stof(line3);
-       }
-     if (!line4.empty())
-       {
-     es_dataDist = std::stof(line4);
-       } 
     }
   else
     std::cout << "Error reading:" << ec.message() << std::endl;}
@@ -85,7 +76,8 @@ void TcpServer::Write_Data(){
   if (connectMode){
     //SAY("Send data");
     std::ostream ss(&output_buffer_);
-    ss << std::fixed << std::setprecision(2) << yawData << "\r";
+    ss << std::fixed << std::setprecision(2) << yawData <<
+      ";" << xData << ";" << yData << "\r";
     async_write(socket, output_buffer_,
 		boost::bind(&TcpServer::Write_Handler, this, placeholders::error, placeholders::bytes_transferred));
     svc.reset();
@@ -96,7 +88,15 @@ void TcpServer::Write_Data(){
 
 void TcpServer::UpdateYaw(double data) {
   yawData = data;
-}  
+}
+
+void TcpServer::UpdateX(float data) {
+  xData = data;
+}
+
+void TcpServer::UpdateY(float data) {
+  yData = data;
+} 
 
 void TcpServer::Read_Data(){
   if (connectMode){ 
