@@ -12,14 +12,13 @@ static const GLfloat g_vertex_buffer_data[] = {
   675.0f/960.0f - 1.0f, 417.5f/540.0f - 1.0f, 0.0f,
   662.5f/960.0f - 1.0f, 415.0f/540.0f - 1.0f, 0.0f,
   650.0f/960.0f - 1.0f, 410.0f/540.0f - 1.0f, 0.0f,
-  //610.0f/960.0f - 1.0f, 410.0f/540.0f - 1.0f, 0.0f,
 };
 
 // A vectors which represents a phantom
 static const GLfloat g_phantom_buffer_data[] = {
   800.0f/960.0f - 1.0f, 395.0f/540.0f - 1.0f, 0.0f,
-  //610.0f/960.0f - 1.0f, 410.0f/540.0f - 1.0f, 0.0f,
 };
+
 
 int waitCounter = 0;
 
@@ -131,8 +130,7 @@ void RenderUtils::RenderGantry(glm::uvec2 eyeSize, float angle, float dist){
   // Give our vertices to OpenGL.
   RotateObject(angle* PI / 180, 0.0, dist);
   glBufferData(GL_ARRAY_BUFFER, sizeof(g_vertex_rotated_buffer_data), g_vertex_rotated_buffer_data, GL_STATIC_DRAW); 
-  glEnableVertexAttribArray(0);
- 
+  glEnableVertexAttribArray(0); 
   glBindBuffer(GL_ARRAY_BUFFER, vertexbuffer);
   //std::cout << "checked" << std::endl;
   glVertexAttribPointer(
@@ -202,11 +200,8 @@ void RenderUtils::RenderBreadCrumb(glm::uvec2 eyeSize){
  			0,
  			(void*)0
  			);
-  //glRotatef(45,0.0f,0.0f,1.0f);
   int n = g_breadcrumb_buffer_dataVec.size();
-  // std::cout << sizeof(g_breadcrumb_buffer_data)/sizeof(g_breadcrumb_buffer_data[0]) << std::endl;
   glDrawArrays(GL_POINTS, 0, n);
   glDisableVertexAttribArray(0);
 }
-
 

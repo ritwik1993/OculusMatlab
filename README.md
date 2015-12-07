@@ -20,7 +20,13 @@ to load them.
 
 This command is likely to take a while. It's a big project with lots of submodules
 
-NOTE! The following steps MIGHT not work if you do not have boost installed in your system. I will soon add instructions on what to do if thats the case.
+Install Boost on your system (if it isn't already installed)
+
+ - For Linux
+
+	      	 sudo apt-get install libboost-all-dev
+		 
+NOTE! The following steps MIGHT not work if you do not have boost installed in your system. I will soon add instructions on what to do about that on a windows system
 
 ## Creating project files
 
