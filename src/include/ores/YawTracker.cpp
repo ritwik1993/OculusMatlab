@@ -44,11 +44,13 @@ void YawTracker::ReadState() {
   currentYaw =  euler.y * RADIANS_TO_DEGREES;
 }
 
+// Accessor for the Yaw
 double YawTracker::CurrentYaw() {
   ReadState();
   return ( currentYaw);
 }
 
+// Accessor for the X pose
 float YawTracker::CurrentX() {
   if (!ovrStatus_PositionConnected && !ovrStatus_PositionTracked)
     return (0.0);
@@ -56,6 +58,7 @@ float YawTracker::CurrentX() {
   return ( currentX);
 }
 
+// Accessor for the Y pose
 float YawTracker::CurrentY() {
    if (!ovrStatus_PositionConnected && !ovrStatus_PositionTracked)
      return (0.0);
@@ -63,6 +66,7 @@ float YawTracker::CurrentY() {
   return ( currentY);
 }
 
+// Accessor for the boolean tracking state
 bool YawTracker::ReadTrackingState() {
   return trackingState;
     }

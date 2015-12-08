@@ -1,6 +1,26 @@
+/************************************************************************************
+
+ Authors     :   Ritwik Ummalaneni <ritwik1993@gmail.com>
+ Copyright   :   Copyright Ritwik Ummalaneni. All Rights reserved.
+
+ Licensed under the Apache License, Version 2.0 (the "License");
+ you may not use this file except in compliance with the License.
+ You may obtain a copy of the License at
+
+ http://www.apache.org/licenses/LICENSE-2.0
+
+ Unless required by applicable law or agreed to in writing, software
+ distributed under the License is distributed on an "AS IS" BASIS,
+ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ See the License for the specific language governing permissions and
+ limitations under the License.
+
+ ************************************************************************************/
 #include "Common.h"
 
-// An array of 3 vectors which represents 3 vertices
+// A lot of vertex definitions in this file look weird - this is because a few different functions of OpenGL use contrasting coordinate systems
+
+// Vertex representation of the gantry
 static const GLfloat g_vertex_buffer_data[] = {
   650.0f/960.0f - 1.0f, 370.0f/540.0f - 1.0f, 0.0f,
   662.5f/960.0f - 1.0f, 365.0f/540.0f - 1.0f, 0.0f,
@@ -14,32 +34,37 @@ static const GLfloat g_vertex_buffer_data[] = {
   650.0f/960.0f - 1.0f, 410.0f/540.0f - 1.0f, 0.0f,
 };
 
-// A vectors which represents a phantom
+// Vertex representation of the phantom - RU todo: Make this automated
+// by reading in data during initialisation of the application
 static const GLfloat g_phantom_buffer_data[] = {
   //800.0f/960.0f - 1.0f, 395.0f/540.0f - 1.0f, 0.0f,
   -0.29f, -0.27f, 0.0f
 };
 
-
+// This wait counter is used for generating the time interval for the breadcrumb
 int waitCounter = 0;
 
 GLfloat g_vertex_rotated_buffer_data[30];
+// Vector breadcrumb because data is added sequentially
 std::vector< GLfloat> g_breadcrumb_buffer_dataVec;
 
 RenderUtils::RenderUtils() { 
 }
 
+// Method that rotates and translates the vertex representation of the gantry
 void RenderUtils::RotateObject(float angle, float x, float y){
   int i;
   //std::cout << g_vertex_rotated_buffer_data << std::endl;
   for (i = 0;i < 30; i = i+3)
-    {
+    { //-0.29f and -0.27f are the x and y coord of the
+      // center of the position map 
       g_vertex_rotated_buffer_data[i] = (cos(angle) * (g_vertex_buffer_data[i]+0.29f)
 					 - sin(angle) * (g_vertex_buffer_data[i+1]+0.277f)) - 0.29f + x/300.0f;
       g_vertex_rotated_buffer_data[i+1] = (sin(angle) * (g_vertex_buffer_data[i]+0.29f)
 					   + cos(angle) * (g_vertex_buffer_data[i+1]+0.277f)) - 0.27f + y/300.0f;
        g_vertex_rotated_buffer_data[i+2] =  g_vertex_buffer_data[i+2];
     }
+  // push back the data into breadcrumb vector
   if (waitCounter == 0){
   g_breadcrumb_buffer_dataVec.push_back(g_vertex_rotated_buffer_data[6]);
   g_breadcrumb_buffer_dataVec.push_back((g_vertex_rotated_buffer_data[7]);
@@ -58,16 +83,18 @@ void RenderUtils::InitVAO() {
   glBindVertexArray(VertexArrayID);  
 }
 
+// This gives a rgb value for a 0-100 ranged integer with 0 being Red and
+// 100 being Green
 void RenderUtils::ConvertInt2RG(float i){
   g = double(i) / 100.0;
   r = (100.0 - double(i)) / 100.0;
   b = 0;
 }
 
+// Method to create the colormap to indicate ES info.
 void RenderUtils:: RenderHeatMap(glm::uvec2 eyeSize, float i){
     Platform::sleepMillis(1);
     ConvertInt2RG(i);
-    //std::cout << sqrt(4) << std::endl;
     if (True) {
         glEnable(GL_SCISSOR_TEST);
         glScissor(0, 2*eyeSize.y/3, eyeSize.x, eyeSize.y/3);
@@ -77,6 +104,7 @@ void RenderUtils:: RenderHeatMap(glm::uvec2 eyeSize, float i){
     }
 }
 
+// Method to render a string on the OR
 void RenderUtils::RenderMessageAt(std::string str, glm::uvec2 windowSize, glm::vec2  pos){
   windowAspect = aspect(windowSize);
   windowAspectInverse = 1.0f / windowAspect;
@@ -93,6 +121,8 @@ void RenderUtils::RenderMessageAt(std::string str, glm::uvec2 windowSize, glm::v
   mv.pop();
 }
 
+// Method to render a position map - Like I said at the top
+// the coordinates used here are for a different system
 void RenderUtils::RenderPositionMap(glm::uvec2 eyeSize) { 
    glEnable(GL_SCISSOR_TEST);
    glScissor(250, 350, 320, 320);
@@ -101,6 +131,7 @@ void RenderUtils::RenderPositionMap(glm::uvec2 eyeSize) {
    glDisable(GL_SCISSOR_TEST);
 }
 
+// Method that calls the other render functions and creates the final display
 void RenderUtils::RenderFinal(glm::uvec2 eyeSize, float Yaw, float POS,
 			      float sES, float dist){
   RenderHeatMap(eyeSize, sES);
@@ -120,6 +151,7 @@ void RenderUtils::RenderOdomData(glm::uvec2 eyeSize, float distance){
    
 }
 
+// Render Gantry based on the vertex representation defined at the top
 void RenderUtils::RenderGantry(glm::uvec2 eyeSize, float angle, float x, float y){
   InitVAO();
   // This will identify our vertex buffer  
@@ -147,6 +179,7 @@ void RenderUtils::RenderGantry(glm::uvec2 eyeSize, float angle, float x, float y
   glDisableVertexAttribArray(0);
 }
 
+//Render the phantom based on the vertex representation defined at the top
 void RenderUtils::RenderPhantom(glm::uvec2 eyeSize){
   InitVAO();
   glEnable(GL_PROGRAM_POINT_SIZE);
@@ -175,6 +208,8 @@ void RenderUtils::RenderPhantom(glm::uvec2 eyeSize){
   glDisableVertexAttribArray(0);
 }
 
+// Render the breadcrumb based on the vector generated and appended
+// sequentially
 void RenderUtils::RenderBreadCrumb(glm::uvec2 eyeSize){
   InitVAO();
   glEnable(GL_PROGRAM_POINT_SIZE);

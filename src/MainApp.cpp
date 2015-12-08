@@ -1,3 +1,8 @@
+// This is the code for the demo which does the following:
+// 1. Send yaw and X,Y data from the rift to a Matlab application
+// 2. Recieve Data from the Matlab script
+
+// This is a standard include to use the ORaction library
 #include "Common.h"
 
 static const glm::uvec2 WINDOW_SIZE(1280, 800);
@@ -16,11 +21,12 @@ int k =0;
 class MainApp: public RiftGlfwApp {
   PerEyeArg eyes[2];
   ovrTexture eyeTextures[2];
+  // Initialise a RenderUtils object 
   RenderUtils *oresRender = new RenderUtils(); // RU todo: Destroy this
   float ipd, eyeHeight;
   //Initialise a tracker object using current HMD
     YawTracker *trackObj = new YawTracker(hmd);
-    //Initialise a Tcp server to send data on port (def: 1700)
+  //Initialise a Tcp server to send data on port (def: 1700)
     TcpServer *socketObj = new TcpServer(1700);
 public:
   MainApp() {
@@ -78,12 +84,15 @@ public:
   virtual void draw() {
     glm::uvec2 eyeSize = getSize();
     static ovrPosef eyePoses[2];    
-    //SAY("Current Yaw - %.02f", trackObj->CurrentYaw());	
+    // Update the messages that have to be sent to the Matlab application	
     socketObj->UpdateYaw(trackObj->CurrentYaw());
     socketObj->UpdateX(trackObj->CurrentX() * 100); // convert to cm
     socketObj->UpdateY(trackObj->CurrentY() * 100); //  convert to cm
+    // Method that writes the data across the TCP/IP port (See TcpServer class)
     socketObj->Write_Data();
+    // Method to read data across the TCP/IP port (See TcpServer class)
     socketObj->Read_Data();
+    // Store in variables
     float yaw = socketObj->Get_EsDataYaw();
     float esPOS = socketObj->Get_EsDataPOS();
     float sES = socketObj->Get_EsDatasES();
@@ -94,13 +103,14 @@ public:
       ovrEyeType eye = hmd->EyeRenderOrder[i];
       PerEyeArg & eyeArgs = eyes[eye];
       Stacks::projection().top() = eyeArgs.projection;
-
       eyeArgs.framebuffer->Bind();
+      // Clear screen prior to each render
       glClearColor(0.0f,0.0f,0.0f,0.0f);
       glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
       oglplus::Context::Clear().DepthBuffer();
       Stacks::withPush(mv, [&]{
-        mv.preMultiply(eyeArgs.modelviewOffset);
+	  mv.preMultiply(eyeArgs.modelviewOffset);
+	  // Call the render method (See RenderUtils class)
 	oresRender->RenderFinal(eyeSize, yaw, esPOS, sES, esDist);	
       });
     }

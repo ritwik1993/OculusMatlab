@@ -1,3 +1,8 @@
+// This is the code for the demo which does the following:
+// 1. Send yaw and X,Y data from the rift to a Matlab application
+// 2. Recieve Data from the Matlab script
+
+// This is a standard include to use the ORaction library
 #include "Common.h"
 
 static const glm::uvec2 WINDOW_SIZE(1280, 800);
@@ -16,6 +21,7 @@ int k =0;
 class SimulatedMainApp: public RiftGlfwApp {
   PerEyeArg eyes[2];
   ovrTexture eyeTextures[2];
+  // Initialise a RenderUtils object 
   RenderUtils *oresRender = new RenderUtils(); // RU todo: Destroy this
   float ipd, eyeHeight;
   //Initialise a tracker object using current HMD
@@ -77,11 +83,14 @@ public:
 
   virtual void draw() {
     glm::uvec2 eyeSize = getSize();
-    static ovrPosef eyePoses[2];    
-    //SAY("Current Yaw - %.02f", trackObj->CurrentYaw());	
+    static ovrPosef eyePoses[2];
+    // Update the messages that have to be sent to the Matlab application
     socketObj->UpdateYaw(trackObj->CurrentYaw());
+    // Method that writes the data across the TCP/IP port (See TcpServer class
     socketObj->Write_Data();
+    // Method to read data across the TCP/IP port (See TcpServer class)
     socketObj->Read_Data();
+    // Store in variables
     float esYaw = socketObj->Get_EsDataYaw();
     float esPOS = socketObj->Get_EsDataPOS();
     float essES = socketObj->Get_EsDatasES();
@@ -94,11 +103,13 @@ public:
       Stacks::projection().top() = eyeArgs.projection;
 
       eyeArgs.framebuffer->Bind();
+      // Clear screen prior to each render
       glClearColor(0.0f,0.0f,0.0f,0.0f);
       glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
       oglplus::Context::Clear().DepthBuffer();
       Stacks::withPush(mv, [&]{
-        mv.preMultiply(eyeArgs.modelviewOffset);
+	  mv.preMultiply(eyeArgs.modelviewOffset);
+	  // Call the render method (See RenderUtils class)
 	oresRender->RenderFinal(eyeSize, esYaw, esPOS, essES, esDist);	
       });
     }

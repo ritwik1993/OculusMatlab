@@ -21,7 +21,7 @@
 using namespace boost::asio;
 using namespace boost::asio::ip;
 
-
+// Initialise an acceptor and asynchronously listen for connections
 TcpServer::TcpServer(unsigned short port = 1700)
   : ipPort(port){
   tcp::acceptor acc(svc, tcp::endpoint(tcp::v4(), ipPort));
@@ -31,6 +31,16 @@ TcpServer::TcpServer(unsigned short port = 1700)
   svc.run();
 }
 
+// This handler is automatically called when a connection is accepted
+void TcpServer::Accept_Handler(const boost::system::error_code& ec){
+  if (!ec)
+    {
+      std::cout << "Accepted a connection! - Now switching to write mode " << std::endl;
+      connectMode = 1;
+    }
+}
+
+// Write handler
 void TcpServer::Write_Handler(const boost::system::error_code& ec,
 			      std::size_t bytes_transferred){
   if (!ec)
@@ -38,6 +48,8 @@ void TcpServer::Write_Handler(const boost::system::error_code& ec,
       //std::cout << "Just sent " << yawData << std::endl;
     }
 }
+
+// Read handler - divide the packet into comma seperated variables
 void TcpServer::Read_Handler(const boost::system::error_code& ec,
 				std::size_t bytes_transferred){
   if (!ec)
@@ -64,40 +76,37 @@ void TcpServer::Read_Handler(const boost::system::error_code& ec,
   else
     std::cout << "Error reading:" << ec.message() << std::endl;}
 
-void TcpServer::Accept_Handler(const boost::system::error_code& ec){
-  if (!ec)
-    {
-      std::cout << "Accepted a connection! - Now switching to write mode " << std::endl;
-      connectMode = 1;
-    }
-}
-
+// Method that writes data in the buffer to be sent across the port
 void TcpServer::Write_Data(){
   if (connectMode){
-    //SAY("Send data");
     std::ostream ss(&output_buffer_);
+    // Set precision to 2 digits for efficient data transfer
     ss << std::fixed << std::setprecision(2) << yawData <<
       ";" << xData << ";" << yData << "\r";
     async_write(socket, output_buffer_,
 		boost::bind(&TcpServer::Write_Handler, this, placeholders::error, placeholders::bytes_transferred));
+    // Run
     svc.reset();
     svc.run();
     }
 }
 
-
+// Method to set the yaw message
 void TcpServer::UpdateYaw(double data) {
   yawData = data;
 }
 
+// Method to set the X pose data
 void TcpServer::UpdateX(float data) {
   xData = data;
 }
 
+// Method to set the Y pose data
 void TcpServer::UpdateY(float data) {
   yData = data;
 } 
 
+// Method that reads the data until a carraige return is recieved
 void TcpServer::Read_Data(){
   if (connectMode){ 
     async_read_until(socket, input_buffer_, "\r" , boost::bind(&TcpServer::Read_Handler, this,
@@ -108,22 +117,27 @@ void TcpServer::Read_Data(){
   }
 }
 
+// Accessor 
 float TcpServer::Get_EsDataYaw(){
   return es_dataYaw;
 }
 
+// Accessor
 float TcpServer::Get_EsDataPOS(){
   return es_dataPOS;
 }
 
+// Accessor
 float TcpServer::Get_EsDatasES(){
   return es_datasES;
 }
 
+// Accessor
 float TcpServer::Get_EsDataDist(){
   return es_dataDist;
 }
 
+// Destructor
 TcpServer::~TcpServer(){
   svc.stop();
 }
