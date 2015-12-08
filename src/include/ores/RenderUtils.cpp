@@ -16,7 +16,8 @@ static const GLfloat g_vertex_buffer_data[] = {
 
 // A vectors which represents a phantom
 static const GLfloat g_phantom_buffer_data[] = {
-  800.0f/960.0f - 1.0f, 395.0f/540.0f - 1.0f, 0.0f,
+  //800.0f/960.0f - 1.0f, 395.0f/540.0f - 1.0f, 0.0f,
+  -0.29f, -0.27f, 0.0f
 };
 
 
@@ -34,14 +35,14 @@ void RenderUtils::RotateObject(float angle, float x, float y){
   for (i = 0;i < 30; i = i+3)
     {
       g_vertex_rotated_buffer_data[i] = (cos(angle) * (g_vertex_buffer_data[i]+0.29f)
-					 - sin(angle) * (g_vertex_buffer_data[i+1]+0.277f)) - 0.29f + x/200.0f;
+					 - sin(angle) * (g_vertex_buffer_data[i+1]+0.277f)) - 0.29f + x/300.0f;
       g_vertex_rotated_buffer_data[i+1] = (sin(angle) * (g_vertex_buffer_data[i]+0.29f)
-					   + cos(angle) * (g_vertex_buffer_data[i+1]+0.277f)) - 0.27f + y/200.0f;
+					   + cos(angle) * (g_vertex_buffer_data[i+1]+0.277f)) - 0.27f + y/300.0f;
        g_vertex_rotated_buffer_data[i+2] =  g_vertex_buffer_data[i+2];
     }
   if (waitCounter == 0){
   g_breadcrumb_buffer_dataVec.push_back(g_vertex_rotated_buffer_data[6]);
-  g_breadcrumb_buffer_dataVec.push_back(g_vertex_rotated_buffer_data[7]);
+  g_breadcrumb_buffer_dataVec.push_back((g_vertex_rotated_buffer_data[7]);
   g_breadcrumb_buffer_dataVec.push_back(g_vertex_rotated_buffer_data[8]);
   waitCounter = 100;
   }
@@ -104,7 +105,7 @@ void RenderUtils::RenderFinal(glm::uvec2 eyeSize, float Yaw, float POS,
 			      float sES, float dist){
   RenderHeatMap(eyeSize, sES);
   RenderPositionMap(eyeSize);
-  RenderGantry(eyeSize, Yaw, POS);
+  RenderGantry(eyeSize, Yaw, dist, POS);
   RenderBreadCrumb(eyeSize);
   RenderPhantom(eyeSize);
   RenderOdomData(eyeSize, dist);
@@ -119,7 +120,7 @@ void RenderUtils::RenderOdomData(glm::uvec2 eyeSize, float distance){
    
 }
 
-void RenderUtils::RenderGantry(glm::uvec2 eyeSize, float angle, float dist){
+void RenderUtils::RenderGantry(glm::uvec2 eyeSize, float angle, float x, float y){
   InitVAO();
   // This will identify our vertex buffer  
   GLuint vertexbuffer;
@@ -128,7 +129,7 @@ void RenderUtils::RenderGantry(glm::uvec2 eyeSize, float angle, float dist){
  // The following commands will talk about our 'vertexbuffer' buffer
   glBindBuffer(GL_ARRAY_BUFFER, vertexbuffer);
   // Give our vertices to OpenGL.
-  RotateObject(angle* PI / 180, 0.0, dist);
+  RotateObject(angle* PI / 180, x, y);
   glBufferData(GL_ARRAY_BUFFER, sizeof(g_vertex_rotated_buffer_data), g_vertex_rotated_buffer_data, GL_STATIC_DRAW); 
   glEnableVertexAttribArray(0); 
   glBindBuffer(GL_ARRAY_BUFFER, vertexbuffer);
@@ -178,6 +179,7 @@ void RenderUtils::RenderBreadCrumb(glm::uvec2 eyeSize){
   InitVAO();
   glEnable(GL_PROGRAM_POINT_SIZE);
   glPointSize(3);
+  int start = 0;
   GLfloat g_breadcrumb_buffer_data[g_breadcrumb_buffer_dataVec.size()];
   std::copy(g_breadcrumb_buffer_dataVec.begin(),
 	    g_breadcrumb_buffer_dataVec.end(),
@@ -201,6 +203,8 @@ void RenderUtils::RenderBreadCrumb(glm::uvec2 eyeSize){
  			(void*)0
  			);
   int n = g_breadcrumb_buffer_dataVec.size();
+  if (n > 20)
+    start = n - 20;	   
   glDrawArrays(GL_POINTS, 0, n);
   glDisableVertexAttribArray(0);
 }
