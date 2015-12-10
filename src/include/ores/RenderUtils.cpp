@@ -57,17 +57,18 @@ void RenderUtils::RotateObject(float angle, float x, float y){
   //std::cout << g_vertex_rotated_buffer_data << std::endl;
   for (i = 0;i < 30; i = i+3)
     { //-0.29f and -0.27f are the x and y coord of the
-      // center of the position map 
+      // center of the position map and the /400.0f controls the
+      // scale
       g_vertex_rotated_buffer_data[i] = (cos(angle) * (g_vertex_buffer_data[i]+0.29f)
-					 - sin(angle) * (g_vertex_buffer_data[i+1]+0.277f)) - 0.29f + x/300.0f;
+					 - sin(angle) * (g_vertex_buffer_data[i+1]+0.277f)) - 0.29f + x/400.0f;
       g_vertex_rotated_buffer_data[i+1] = (sin(angle) * (g_vertex_buffer_data[i]+0.29f)
-					   + cos(angle) * (g_vertex_buffer_data[i+1]+0.277f)) - 0.27f + y/300.0f;
+					   + cos(angle) * (g_vertex_buffer_data[i+1]+0.277f)) - 0.27f + y/400.0f;
        g_vertex_rotated_buffer_data[i+2] =  g_vertex_buffer_data[i+2];
     }
   // push back the data into breadcrumb vector
   if (waitCounter == 0){
   g_breadcrumb_buffer_dataVec.push_back(g_vertex_rotated_buffer_data[6]);
-  g_breadcrumb_buffer_dataVec.push_back((g_vertex_rotated_buffer_data[7]);
+  g_breadcrumb_buffer_dataVec.push_back(g_vertex_rotated_buffer_data[7]);
   g_breadcrumb_buffer_dataVec.push_back(g_vertex_rotated_buffer_data[8]);
   waitCounter = 100;
   }
