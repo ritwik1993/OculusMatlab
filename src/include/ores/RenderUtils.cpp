@@ -38,7 +38,7 @@ static const GLfloat g_vertex_buffer_data[] = {
 // by reading in data during initialisation of the application
 static const GLfloat g_phantom_buffer_data[] = {
   //800.0f/960.0f - 1.0f, 395.0f/540.0f - 1.0f, 0.0f,
-  -0.29f, -0.27f, 0.0f
+  -0.3f, -0.275f, 0.0f
 };
 
 // This wait counter is used for generating the time interval for the breadcrumb
@@ -60,7 +60,7 @@ void RenderUtils::RotateObject(float angle, float x, float y){
       // center of the position map and the /400.0f controls the
       // scale
       g_vertex_rotated_buffer_data[i] = (cos(angle) * (g_vertex_buffer_data[i]+0.29f)
-					 - sin(angle) * (g_vertex_buffer_data[i+1]+0.277f)) - 0.29f + x/400.0f;
+					 - sin(angle) * (g_vertex_buffer_data[i+1]+0.277f)) - 0.29f + x/350.0f;
       g_vertex_rotated_buffer_data[i+1] = (sin(angle) * (g_vertex_buffer_data[i]+0.29f)
 					   + cos(angle) * (g_vertex_buffer_data[i+1]+0.277f)) - 0.27f + y/400.0f;
        g_vertex_rotated_buffer_data[i+2] =  g_vertex_buffer_data[i+2];
@@ -145,8 +145,8 @@ void RenderUtils::RenderFinal(glm::uvec2 eyeSize, float Yaw, float POS,
 
 void RenderUtils::RenderOdomData(glm::uvec2 eyeSize, float distance){
  std::string message = Platform::format(
-					     "Estimated Distance: %0.2f cm \n"
-					     "Object Type: Conductor",
+					     "Estimated X pos: %0.2f cm \n"
+					     "Object Type: Resistive",
 					     distance);
  RenderMessageAt(message, eyeSize, glm::vec2(0.02f, -0.02f));
    
@@ -184,7 +184,7 @@ void RenderUtils::RenderGantry(glm::uvec2 eyeSize, float angle, float x, float y
 void RenderUtils::RenderPhantom(glm::uvec2 eyeSize){
   InitVAO();
   glEnable(GL_PROGRAM_POINT_SIZE);
-  glPointSize(10);
+  glPointSize(20);
   // This will identify our vertex buffer  
   GLuint vertexbuffer;
   // Generate 1 buffer, put the resulting identifier in vertexbuffer
