@@ -16,7 +16,7 @@ to load them.
 
 ## Checking out 
 
-	git clone git@github.com:ritwik1993/OculusMatlab.git --recursive
+	git clone https://github.com/ritwik1993/OculusMatlab.git --recursive
 
 This command is likely to take a while. It's a big project with lots of submodules
 
@@ -24,7 +24,7 @@ Install Boost on your system (if it isn't already installed)
 
  - For Linux
 
-	      	 sudo apt-get install libboost-all-dev
+	      	 sudo apt-get install build-essential cmake libboost-all-dev libudev-dev
 
   Also make sure neccessary utilities like gcc, make , cmake are installed
   
