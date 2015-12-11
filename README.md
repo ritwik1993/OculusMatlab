@@ -97,7 +97,10 @@ However, if you are using either of these optional libraries, keep in mind CMake
 
 # Running the code
 
-Once the binaries are built, they can be located in the build/output folder. The two main binaries used for the electrolocation demo are *MainApp* and *SimulatedMainApp*. The other binaries are just for development tests.
+Once the binaries are built, they can be located in the build/output folder. The two main binaries used for the electrolocation demo are *MainApp* and *SimulatedMainApp*. The other binaries are just for development tests. By default, all communication occurs on port 1700 - but this can be changed very easily.
 
 ##MainApp
-This application creates a listener to a tcp client and works only when a tcp connection is found and accepted. Once communication begins - it sends the headset's translational X, translational Y and angular Yaw data (or any other message you want) across the connection. It also listens for data coming in from the tcp client. For a simple working demo use the matlab script *quickDemo* located in /mscripts. This script recieves data from the tcp server (the c++ application in this case) and relayes the first message (yaw) back to the application. This can easily be upgraded to work with the NxR 4DOF sensorpod using *demoGantry*
+This application creates a listener to a tcp client and works only when a tcp connection is found and accepted. Once communication begins - it sends the headset's translational X, translational Y and angular Yaw data (or any other message you want) across the connection. It also listens for data coming in from the tcp client. For a simple working demo use the matlab script *quickDemo* located in /mscripts. This script recieves data from the tcp server (the c++ application in this case) and relays the first message (yaw) back to the application. This can easily be upgraded to work with the NxR 4DOF sensorpod similar to the matlab scripts  *demoGantry*, or *demoGantryTraj*
+
+##SimulatedMainApp
+This works in a simlar way as MainApp except that only one message is currently sent from the c++ application to the tcp client. Using the matlab script *SimulatedDataDemo*, we can visualise previously collected data.
