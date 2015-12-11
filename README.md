@@ -14,6 +14,13 @@ to load them.
 
 # Instructions for building (all platforms)
 
+Before Starting, check if you have the lastest version of the Oculus SDK built or not. 
+ - On linux
+Run the following in a seperate terminal
+
+			ovrd
+
+If you dont, go to the [Oculus developer site](https://developer.oculus.com/)  and follow instructions to setup the SDK and the basic demos/services
 ## Checking out 
 
 	git clone https://github.com/ritwik1993/OculusMatlab.git --recursive
@@ -85,12 +92,6 @@ Note that the CMake Eclipse generators will complain about a build directory tha
 but I have not experienced any issues with this. 
 
 I highly recommend using the Ninja builder instead of makefiles.  It's dramatically faster.  Note that the Ubuntu package for the ninja builder is `ninja-build` *not* `ninja`, which is an unrelated tool.  
-
-# Optional dependencies
-
-The examples should include all the *required* dependencies for making the basic examples.  However, if you want to build the examples from Chapter 9, you will require Qt 5.4 or higher.  For the Chapter 13 examples, you will required OpenCV 2.x.  If you wish to use these you can set the Qt5_DIR and OpenCV_DIR values when running CMake in order to allow it to find them, although it will make an effort to find them independently.  
-
-However, if you are using either of these optional libraries, keep in mind CMake will not attempt to copy the binaries from the library.  
 
 # Running the code
 
