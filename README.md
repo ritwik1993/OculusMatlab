@@ -53,7 +53,7 @@ Will show you a list of supported generators on your platform.
 
 ## Building
 
-Depends on your build tool.  If you're using Visual Studio or XCode you can just say 'File, Open Project' or something to that effect and point it at the OculusRiftInAction/build directory.  
+Depends on your build tool.  If you're using Visual Studio or XCode you can just say 'File, Open Project' or something to that effect and point it at the OculusRiftInAction/build directory. On Linux I like make, so i can simple run 'make' from the build directory after the 'cmake..' command  
 
 # Supported platforms
 
