@@ -25,7 +25,7 @@ If you dont, go to the [Oculus developer site](https://developer.oculus.com/)  a
 
 	git clone https://github.com/ritwik1993/OculusMatlab.git --recursive
 
-This command is likely to take a while. It's a big project with lots of submodules
+If you have already downloaded the repository before, but need the updates that came in later - simply use *git pull*. This command is likely to take a while. It's a big project with lots of submodules
 
 Install Boost and other essentials on your system (if it isn't already installed)
 
