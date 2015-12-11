@@ -20,15 +20,12 @@ to load them.
 
 This command is likely to take a while. It's a big project with lots of submodules
 
-Install Boost on your system (if it isn't already installed)
+Install Boost and other essentials on your system (if it isn't already installed)
 
  - For Linux
 
 	      	 sudo apt-get install build-essential cmake libboost-all-dev libudev-dev
 
-  Also make sure neccessary utilities like gcc, make , cmake are installed
-  
-       	    	 sudo apt-get install build-essential cmake
 		 
 NOTE! The following steps MIGHT not work if you do not have boost installed in your system. I will soon add instructions on what to do about that on a windows system
 
