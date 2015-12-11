@@ -4,6 +4,8 @@ clear
 dist = input('Enter the p.dl dist of phantom from gantry in cm: ');
 uiopen('*.mat');
 t = tcpclient('localhost', 1700);
+%use localhost when the server is on same computer
+% otherwise use IP adddress of the server
 i = 1;
 k = length(BS);
 ES = abs(ES);

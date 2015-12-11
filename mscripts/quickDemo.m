@@ -1,7 +1,9 @@
 close all
 clear 
 
-t = tcpclient('localhost', 1700);
+t = tcpclient('localhost', 1700); 
+%use localhost when the server is on same computer
+% otherwise use IP adddress of the server
 i = 0;
 k = 1;
 while (true)

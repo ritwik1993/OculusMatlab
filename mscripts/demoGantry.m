@@ -5,7 +5,9 @@ g.Connect;
 
 clearvars -except g
 
-t = tcpclient('192.168.1.124', 1700);
+t = tcpclient('localhost', 1700);
+%use localhost when the server is on same computer
+% otherwise use IP adddress of the server
 i = 0;
 k = 1;
 

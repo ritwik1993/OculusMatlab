@@ -8,7 +8,9 @@ startpos = [-0.4,-0.15,-0.2,0];
 g.goToPos(startpos);
 pause(10)
 
-t = tcpclient('192.168.1.124', 1700);
+t = tcpclient('localhost', 1700);
+%use localhost when the server is on same computer
+% otherwise use IP adddress of the server
 
 g.DemoLinTrajOculus(startpos, endpos, t);
 
