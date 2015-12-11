@@ -27,6 +27,7 @@ Install Boost on your system (if it isn't already installed)
 	      	 sudo apt-get install libboost-all-dev
 
   Also make sure neccessary utilities like gcc, make , cmake are installed
+  
        	    	 sudo apt-get install build-essential cmake
 		 
 NOTE! The following steps MIGHT not work if you do not have boost installed in your system. I will soon add instructions on what to do about that on a windows system
